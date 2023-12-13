@@ -1,15 +1,6 @@
-#docker
+#docker installation
 Instruction:
-    For developer:
-        1. Open project "backend"
-        2. Build image
-            docker build -t [IMAGE_NAME] [DOCKERFILE_PATH]
-    
-    For customer:
-        1. Somehow get image
-        2. Run container
-            docker run -p [LOCAL_PORT]:[CONTAINER_PORT] [IMAGE_NAME]
-        3. Open browser
-        4. URL targer localhost:[LOCAL_PORT]
-
-[DOCKERFILE_PATH]: .
+	1. docker-compose build
+	2. docker-compose up
+	3. localhost:8080 - api
+	4. postgres:5430 - (BD_NAME: API_BD, username:user, password:pass)
