@@ -1,6 +1,7 @@
 package com.spring.web.api.backend.configure;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.HandlerTypePredicate;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
@@ -11,6 +12,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 	@Override
 	public void configurePathMatch(PathMatchConfigurer configurer) {
-		configurer.addPathPrefix("api", HandlerTypePredicate.forAnnotation(RestController.class));
+		AntPathMatcher matcher = new AntPathMatcher();
+		configurer
+			.addPathPrefix("api", HandlerTypePredicate.forAnnotation(RestController.class));
 	}
 }
