@@ -36,28 +36,28 @@ services:
 
         ports:
             -   '8080:8080'
-        depends_on:
-            -   db
-        environment:
-          - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/api_db
-          - SPRING_DATASOURCE_USERNAME=user
-          - SPRING_DATASOURCE_PASSWORD=pass
-          - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
-          - SPRING_JPA_SHOW-SQL=true
-          - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
-
+#        depends_on:
+#            -   db
+#        environment:
+#          - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/api_db
+#          - SPRING_DATASOURCE_USERNAME=user
+#          - SPRING_DATASOURCE_PASSWORD=pass
+#          - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+#          - SPRING_JPA_SHOW-SQL=true
+#          - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+#
 
      # Второй сервис (контейнер): БД.
      # Этот сервис назван 'db'.
-    db:
-        image: postgres:15.0
-        container_name: db
-        ports:
-            - '5432:5432'
-        environment:
-            POSTGRES_DB: api_db
-            POSTGRES_USER: user
-            POSTGRES_PASSWORD: pass
+#    db:
+#        image: postgres:15.0
+#        container_name: db
+#        ports:
+#            - '5432:5432'
+#        environment:
+#            POSTGRES_DB: api_db
+#            POSTGRES_USER: user
+#            POSTGRES_PASSWORD: pass
 #        volumes:
 #          - postgres_db:/var/postgres/lib/data
 #
