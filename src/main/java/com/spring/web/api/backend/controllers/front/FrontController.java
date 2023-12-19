@@ -1,6 +1,5 @@
 package com.spring.web.api.backend.controllers.front;
 
-import org.springframework.data.rest.webmvc.BasePathAwareController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
