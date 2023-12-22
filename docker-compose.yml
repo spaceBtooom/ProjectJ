@@ -48,7 +48,11 @@ services:
           - SPRING_WEB_RESOURCES_STATIC_LOCATIONS=classpath:/frontend/src/
           - SPRINGDOC_API_DOCS_PATH=/docs
           - SPRINGDOC_SWAGGER_UI_PATH=/swag
+          - SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE=${MAX_UPLOAD_FILE_SIZE:-1MB}
+          - SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE=${MAX_UPLOAD_REQUEST_SIZE:-3MB}
 #          springdoc.swagger-ui.disable-swagger-default-url = true
+        volumes:
+          - 'app:/home/app/data'
 
 #      Второй сервис (контейнер): БД.
 #      Этот сервис назван 'db'.
@@ -67,5 +71,7 @@ services:
           - 'postgres_db:/var/postgres/lib/data'
 
 volumes:
+  app:
+    driver: local
   postgres_db:
       driver: local
