@@ -27,7 +27,7 @@ public class VacancyRestController {
 	@ApiResponses(value={
 		@ApiResponse(responseCode = "200", description = "Successfully retrieved")
 	})
-	@GetMapping("/all")
+	@GetMapping("")
 	List<Vacancy> getAllVacancies(){
 		ArrayList<Vacancy> vacancies = new ArrayList<>();
 		vacancyRepository

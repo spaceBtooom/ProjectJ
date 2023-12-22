@@ -37,11 +37,13 @@ services:
         ports:
             -   '8080:8080'
         depends_on:
-            -   db
+            -   'db'
+        env_file:
+            - .env
         environment:
-          - SPRING_DATASOURCE_URL={$DB_SCHEMA:-test_db}
-          - SPRING_DATASOURCE_USERNAME={$DB_NAME:-test}
-          - SPRING_DATASOURCE_PASSWORD={$DB_PASS:-test}
+          - SPRING_DATASOURCE_URL=${DB_URL:-jdbc:postgresql://db:5432/test_db}
+          - SPRING_DATASOURCE_USERNAME=${DB_USER:-test}
+          - SPRING_DATASOURCE_PASSWORD=${DB_PASS:-test}
           - SPRING_JPA_HIBERNATE_DDL_AUTO=none
           - SPRING_WEB_RESOURCES_STATIC_LOCATIONS=classpath:/frontend/src/
           - SPRINGDOC_API_DOCS_PATH=/docs
@@ -56,11 +58,13 @@ services:
         ports:
             - '5432:5432'
         environment:
-            POSTGRES_DB: api_db
-            POSTGRES_USER: user
-            POSTGRES_PASSWORD: pass
+            POSTGRES_DB: ${DB_NAME}
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASS}
+        env_file:
+          - .env
         volumes:
-          - postgres_db:/var/postgres/lib/data
+          - 'postgres_db:/var/postgres/lib/data'
 
 volumes:
   postgres_db:
