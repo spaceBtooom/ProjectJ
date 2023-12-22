@@ -41,13 +41,18 @@ services:
         env_file:
             - .env
         environment:
+          # DB setting
           - SPRING_DATASOURCE_URL=${DB_URL:-jdbc:postgresql://db:5432/test_db}
           - SPRING_DATASOURCE_USERNAME=${DB_USER:-test}
           - SPRING_DATASOURCE_PASSWORD=${DB_PASS:-test}
+          # Hibernate setting
           - SPRING_JPA_HIBERNATE_DDL_AUTO=none
+          # Frontend location
           - SPRING_WEB_RESOURCES_STATIC_LOCATIONS=classpath:/frontend/src/
+          # OpenAPI setting
           - SPRINGDOC_API_DOCS_PATH=/docs
           - SPRINGDOC_SWAGGER_UI_PATH=/swag
+          # File upload operation settings
           - SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE=${MAX_UPLOAD_FILE_SIZE:-1MB}
           - SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE=${MAX_UPLOAD_REQUEST_SIZE:-3MB}
 #          springdoc.swagger-ui.disable-swagger-default-url = true

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -16,10 +17,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/order")
 @Tag(name = "Order API")
+@Log4j2
 public class OrderRestController {
 	private final OrderRepository repository;
 	private final OrderFileService fileService;
@@ -83,6 +87,12 @@ public class OrderRestController {
 		for (MultipartFile file : multipartFile) {
 			String originalFilename = file.getOriginalFilename();
 			String fileName = StringUtils.cleanPath(originalFilename);
+			Pattern pattern = Pattern.compile("\\.(doc|docx|dot|dotx|rtf|pdf|ppt|pptx|txt|odt)$");
+			Matcher matcher = pattern.matcher(fileName);
+			if(!matcher.find())
+			{
+				continue;
+			}
 			long size = file.getSize();
 			String fileCode = fileService.fileUpload(id, fileName, file);
 			fileUploadResponses.add(FileUploadResponse
