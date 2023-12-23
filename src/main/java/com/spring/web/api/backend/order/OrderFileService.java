@@ -28,7 +28,7 @@ public class OrderFileService implements FileService {
 		String fileCode = RandomStringUtils.randomAlphanumeric(8);
 
 		try (InputStream inputStream = multipartFile.getInputStream()) {
-			Path filePath = uploadPath.resolve(fileCode+"-"+fileName);
+			Path filePath = uploadPath.resolve(fileCode);
 			Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException ioe) {
 			throw new IOException("Could not save file: " + fileName, ioe);

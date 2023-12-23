@@ -1,8 +1,8 @@
 package com.spring.web.api.backend.order;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.spring.web.api.backend.fileUtils.FileUploadResponse;
+import com.spring.web.api.backend.order.file.OrderAttachedFile;
+import com.spring.web.api.backend.order.file.OrderAttachedFileRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.io.Resource;
-import org.springframework.data.util.Pair;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,15 +30,17 @@ import java.util.regex.Pattern;
 @Tag(name = "Order API")
 @Log4j2
 public class OrderRestController {
-	private final OrderRepository repository;
+	private final OrderRepository orderRepository;
 	private final OrderFileService fileService;
+	private final OrderAttachedFileRepository orderAttachedFileRepository;
 
-	private static final Integer FILE_SIZE_MAX = 1000000;
 
-	public OrderRestController(OrderRepository repository,
-					   OrderFileService fileService) {
-		this.repository = repository;
+ 	public OrderRestController(OrderRepository orderRepository,
+					   OrderFileService fileService,
+					   OrderAttachedFileRepository orderAttachedFileRepository) {
+		this.orderRepository = orderRepository;
 		this.fileService = fileService;
+		this.orderAttachedFileRepository = orderAttachedFileRepository;
 	}
 
 	@Operation(summary = "Get all orders", description = "Returns all orders")
@@ -49,7 +50,7 @@ public class OrderRestController {
 	@GetMapping("/")
 	List<Order> getOrders() {
 		ArrayList<Order> orders = new ArrayList<>();
-		repository
+		orderRepository
 			.findAll()
 			.forEach(orders::add);
 		return orders;
@@ -64,10 +65,17 @@ public class OrderRestController {
 	ResponseEntity<Order> getOrder(@PathVariable("id")
 						 @Parameter(name = "id", description = "Order id", example = "1")
 						 Long id) {
-		Optional<Order> orders = repository.findById(id);
+		Optional<Order> orders = orderRepository.findById(id);
 		return orders
 			.map(ResponseEntity::ok)
 			.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+	}
+	@DeleteMapping("/{id}")
+	ResponseEntity<Order> deleteOrder(@PathVariable("id")
+						 @Parameter(name = "id", description = "Order id", example = "1")
+						 Long id) {
+		orderRepository.deleteById(id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@ApiResponses(value = {
@@ -79,28 +87,43 @@ public class OrderRestController {
 	ResponseEntity<Order> addOrder(@RequestBody
 						 @Parameter(name = "order", description = "Received order")
 						 Order order) {
-		return Optional.of(repository.save(order))
+		return Optional.of(orderRepository.save(order))
 			.map(ResponseEntity::ok)
 			.orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
 	}
 
 	@PostMapping("/file")
-	ResponseEntity<List<FileUploadResponse>> uploadFileForOrder(
+	ResponseEntity<?> uploadFileForOrder(
 		@RequestParam("id") Integer id,
 		@RequestParam("file") List<MultipartFile> multipartFile
 	) throws IOException {
+		Optional<Order> order = orderRepository.findById(id.longValue());
+		if(order.isEmpty()){
+			return new ResponseEntity<>("Order doesn't exist", HttpStatus.NOT_FOUND);
+		}
+
 		List<FileUploadResponse> fileUploadResponses = new ArrayList<>();
 		for (MultipartFile file : multipartFile) {
+
 			String originalFilename = file.getOriginalFilename();
 			String fileName = StringUtils.cleanPath(originalFilename);
+
 			Pattern pattern = Pattern.compile("\\.(doc|docx|dot|dotx|rtf|pdf|ppt|pptx|txt|odt)$");
 			Matcher matcher = pattern.matcher(fileName);
 			if(!matcher.find())
 			{
 				continue;
 			}
+
 			long size = file.getSize();
 			String fileCode = fileService.fileUpload(id, fileName, file);
+
+			orderAttachedFileRepository.save(OrderAttachedFile
+				.builder()
+				.filecode(fileCode)
+				.filename(fileName)
+				.order(order.get())
+				.build());
 
 			fileUploadResponses.add(FileUploadResponse
 				.builder()
@@ -129,13 +152,17 @@ public class OrderRestController {
 			return ResponseEntity.internalServerError().build();
 		}
 
-
 		if (resource == null) {
 			return new ResponseEntity<>("File not found", HttpStatus.NOT_FOUND);
 		}
 
+		Optional<OrderAttachedFile> orderAttachedFile = orderAttachedFileRepository.findByFilecode(filecode);
+		if(orderAttachedFile.isEmpty()){
+			return new ResponseEntity<>("Cannot find filename",HttpStatus.NOT_FOUND);
+		}
+
 		String contentType = "application/octet-stream";
-		String headerValue = "attachment; filename=\"" + resource.getFilename() + "\"";
+		String headerValue = "attachment; filename=\"" + orderAttachedFile.get().getFilename() + "\"";
 
 		return ResponseEntity.ok()
 			.contentType(MediaType.parseMediaType(contentType))

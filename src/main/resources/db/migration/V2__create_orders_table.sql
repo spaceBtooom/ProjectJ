@@ -24,8 +24,8 @@ CREATE TABLE IF NOT EXISTS orders(
 CREATE TABLE IF NOT EXISTS order_tags(
 	tag_id INTEGER NOT NULL,
 	order_id INTEGER NOT NULL,
-	CONSTRAINT order_tag_fk_1 FOREIGN KEY(tag_id) REFERENCES tags(id),
-	CONSTRAINT order_tag_fk_2 FOREIGN KEY(order_id) REFERENCES orders(id)
+	CONSTRAINT order_tag_fk_1 FOREIGN KEY(tag_id) REFERENCES tags(id) ON DELETE RESTRICT,
+	CONSTRAINT order_tag_fk_2 FOREIGN KEY(order_id) REFERENCES orders(id) ON DELETE CASCADE
 );
 
 
