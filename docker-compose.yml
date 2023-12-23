@@ -52,10 +52,12 @@ services:
           # OpenAPI setting
           - SPRINGDOC_API_DOCS_PATH=/docs
           - SPRINGDOC_SWAGGER_UI_PATH=/swag
+          # SPRINGDOC_SWAGGER_UI_DISABLE_SWAGGER_DEFAULT_URL=true
+            #springdoc.swagger-ui.disable-swagger-default-url = true
           # File upload operation settings
           - SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE=${MAX_UPLOAD_FILE_SIZE:-1MB}
           - SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE=${MAX_UPLOAD_REQUEST_SIZE:-3MB}
-#          springdoc.swagger-ui.disable-swagger-default-url = true
+
         volumes:
           - 'app:/home/app/data'
 

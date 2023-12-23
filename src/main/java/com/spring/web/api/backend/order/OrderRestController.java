@@ -1,5 +1,7 @@
 package com.spring.web.api.backend.order;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.spring.web.api.backend.fileUtils.FileUploadResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -7,7 +9,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.core.io.Resource;
+import org.springframework.data.util.Pair;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -95,16 +101,45 @@ public class OrderRestController {
 			}
 			long size = file.getSize();
 			String fileCode = fileService.fileUpload(id, fileName, file);
+
 			fileUploadResponses.add(FileUploadResponse
 				.builder()
 				.fileName(fileName)
 				.size(size)
-				.downloadUri("/downloadFile/" + fileCode)
+				.downloadUri("/api/order/file/" + id + "/" + fileCode)
 				.build());
 		}
 
 		return new ResponseEntity<>(fileUploadResponses,
 			HttpStatus.OK);
 
+	}
+
+	@GetMapping("/file/{id}/{filecode}")
+	ResponseEntity<?> getOrder(@PathVariable("id")
+						 @Parameter(name = "id", description = "Order id", example = "1")
+						 Integer id,
+						 @PathVariable(name = "filecode")
+						 String filecode) {
+		Resource resource = null;
+		try{
+			resource = fileService.getFileAsResource(id, filecode);
+		}
+		catch (IOException e){
+			return ResponseEntity.internalServerError().build();
+		}
+
+
+		if (resource == null) {
+			return new ResponseEntity<>("File not found", HttpStatus.NOT_FOUND);
+		}
+
+		String contentType = "application/octet-stream";
+		String headerValue = "attachment; filename=\"" + resource.getFilename() + "\"";
+
+		return ResponseEntity.ok()
+			.contentType(MediaType.parseMediaType(contentType))
+			.header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
+			.body(resource);
 	}
 }
