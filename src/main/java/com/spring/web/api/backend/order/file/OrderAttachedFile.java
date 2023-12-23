@@ -23,7 +23,7 @@ public class OrderAttachedFile {
 
 	String filename;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name="order_id")
 	Order order;
 }

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/order")
@@ -35,7 +36,7 @@ public class OrderRestController {
 	private final OrderAttachedFileRepository orderAttachedFileRepository;
 
 
- 	public OrderRestController(OrderRepository orderRepository,
+	public OrderRestController(OrderRepository orderRepository,
 					   OrderFileService fileService,
 					   OrderAttachedFileRepository orderAttachedFileRepository) {
 		this.orderRepository = orderRepository;
@@ -70,10 +71,11 @@ public class OrderRestController {
 			.map(ResponseEntity::ok)
 			.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
+
 	@DeleteMapping("/{id}")
 	ResponseEntity<Order> deleteOrder(@PathVariable("id")
-						 @Parameter(name = "id", description = "Order id", example = "1")
-						 Long id) {
+						    @Parameter(name = "id", description = "Order id", example = "1")
+						    Long id) {
 		orderRepository.deleteById(id);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
@@ -98,7 +100,7 @@ public class OrderRestController {
 		@RequestParam("file") List<MultipartFile> multipartFile
 	) throws IOException {
 		Optional<Order> order = orderRepository.findById(id.longValue());
-		if(order.isEmpty()){
+		if (order.isEmpty()) {
 			return new ResponseEntity<>("Order doesn't exist", HttpStatus.NOT_FOUND);
 		}
 
@@ -110,8 +112,7 @@ public class OrderRestController {
 
 			Pattern pattern = Pattern.compile("\\.(doc|docx|dot|dotx|rtf|pdf|ppt|pptx|txt|odt)$");
 			Matcher matcher = pattern.matcher(fileName);
-			if(!matcher.find())
-			{
+			if (!matcher.find()) {
 				continue;
 			}
 
@@ -139,16 +140,15 @@ public class OrderRestController {
 	}
 
 	@GetMapping("/file/{id}/{filecode}")
-	ResponseEntity<?> getOrder(@PathVariable("id")
-						 @Parameter(name = "id", description = "Order id", example = "1")
-						 Integer id,
-						 @PathVariable(name = "filecode")
-						 String filecode) {
+	ResponseEntity<?> getFile(@PathVariable("id")
+					  @Parameter(name = "id", description = "Order id", example = "1")
+					  Integer id,
+					  @PathVariable(name = "filecode")
+					  String filecode) {
 		Resource resource = null;
-		try{
+		try {
 			resource = fileService.getFileAsResource(id, filecode);
-		}
-		catch (IOException e){
+		} catch (IOException e) {
 			return ResponseEntity.internalServerError().build();
 		}
 
@@ -156,9 +156,10 @@ public class OrderRestController {
 			return new ResponseEntity<>("File not found", HttpStatus.NOT_FOUND);
 		}
 
+		//Or ElseGet
 		Optional<OrderAttachedFile> orderAttachedFile = orderAttachedFileRepository.findByFilecode(filecode);
-		if(orderAttachedFile.isEmpty()){
-			return new ResponseEntity<>("Cannot find filename",HttpStatus.NOT_FOUND);
+		if (orderAttachedFile.isEmpty()) {
+			return new ResponseEntity<>("Cannot find filename", HttpStatus.NOT_FOUND);
 		}
 
 		String contentType = "application/octet-stream";
@@ -169,4 +170,22 @@ public class OrderRestController {
 			.header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
 			.body(resource);
 	}
+
+	@GetMapping("/file/{id}")
+	ResponseEntity<?> getFiles(@PathVariable("id")
+				    @Parameter(name = "id", description = "Order id", example = "1")
+				    Long id) {
+		List<OrderAttachedFile> filenames = orderAttachedFileRepository.findByOrderId(id);
+		if(filenames.isEmpty()){
+			return new ResponseEntity<>("There is no files of order with id:"+id, HttpStatus.NO_CONTENT);
+		}
+
+		return new ResponseEntity<>(
+			filenames
+				.stream()
+				.map(OrderAttachedFile::getFilename)
+				.collect(Collectors.toList()),
+			HttpStatus.OK);
+	}
+
 }
