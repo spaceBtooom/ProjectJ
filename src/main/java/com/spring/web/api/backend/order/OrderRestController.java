@@ -1,6 +1,8 @@
 package com.spring.web.api.backend.order;
 
 import com.spring.web.api.backend.fileUtils.FileUploadResponse;
+import com.spring.web.api.backend.fileUtils.constraint.FileFormatConstraint;
+import com.spring.web.api.backend.fileUtils.constraint.MaxAttachedFileSizeConstraint;
 import com.spring.web.api.backend.order.file.OrderAttachedFile;
 import com.spring.web.api.backend.order.file.OrderAttachedFileRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Validated
 @RestController
 @RequestMapping("/order")
 @Tag(name = "Order API")
@@ -96,27 +101,42 @@ public class OrderRestController {
 
 	@PostMapping("/file")
 	ResponseEntity<?> uploadFileForOrder(
-		@RequestParam("id") Integer id,
-		@RequestParam("file") List<MultipartFile> multipartFile
-	) throws IOException {
+		@RequestParam("id")
+		Integer id,
+		@RequestParam("file")
+		@MaxAttachedFileSizeConstraint
+		List<@FileFormatConstraint MultipartFile> multipartFile
+	) throws IOException, ConstraintViolationException{
 		Optional<Order> order = orderRepository.findById(id.longValue());
+		if(multipartFile.isEmpty()){
+			return new ResponseEntity<>("There are no files to add", HttpStatus.NO_CONTENT);
+		}
 		if (order.isEmpty()) {
 			return new ResponseEntity<>("Order doesn't exist", HttpStatus.NOT_FOUND);
 		}
+
+		//How many attached files can be stored on server
+		int maxFilesNumber = 3;
+		int currentlyFilesNumber = orderAttachedFileRepository.countByOrderId(id);
+
+		if(currentlyFilesNumber >= maxFilesNumber){
+			return new ResponseEntity<>("This order currently full of files", HttpStatus.NOT_FOUND);
+		}
+
+		int uploadFilesNumber = multipartFile.size();
+
+		if(uploadFilesNumber > maxFilesNumber-currentlyFilesNumber){
+			return new ResponseEntity<>("To many attached files. Delete " + (uploadFilesNumber-(maxFilesNumber-currentlyFilesNumber)) + " files", HttpStatus.BAD_REQUEST);
+		}
+
 
 		List<FileUploadResponse> fileUploadResponses = new ArrayList<>();
 		for (MultipartFile file : multipartFile) {
 
 			String originalFilename = file.getOriginalFilename();
 			String fileName = StringUtils.cleanPath(originalFilename);
-
-			Pattern pattern = Pattern.compile("\\.(doc|docx|dot|dotx|rtf|pdf|ppt|pptx|txt|odt)$");
-			Matcher matcher = pattern.matcher(fileName);
-			if (!matcher.find()) {
-				continue;
-			}
-
 			long size = file.getSize();
+
 			String fileCode = fileService.fileUpload(id, fileName, file);
 
 			orderAttachedFileRepository.save(OrderAttachedFile
@@ -134,8 +154,10 @@ public class OrderRestController {
 				.build());
 		}
 
+
 		return new ResponseEntity<>(fileUploadResponses,
 			HttpStatus.OK);
+
 
 	}
 

@@ -24,6 +24,7 @@ public class Order {
 	@SequenceGenerator(name="OrderSeq", sequenceName = "orders_id_seq",allocationSize = 1)
 	private Long id;
 
+
 	private String title;
 
 	private String comment;

@@ -7,5 +7,6 @@ import java.util.Optional;
 
 public interface OrderAttachedFileRepository extends CrudRepository<OrderAttachedFile, Long> {
 	Optional<OrderAttachedFile> findByFilecode(String filecode);
+	Integer countByOrderId(Integer id);
 	List<OrderAttachedFile> findByOrderId(Long id);
 }
