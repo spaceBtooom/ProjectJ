@@ -10,8 +10,7 @@ public class Tag {
 	private String name;
 	private Integer aliasId;
 
-	public Tag(UUID id, String name, Integer aliasId) {
-		this.id = id;
+	public Tag(String name, Integer aliasId) {
 		this.name = name;
 		this.aliasId = aliasId;
 	}
