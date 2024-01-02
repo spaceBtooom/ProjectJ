@@ -101,4 +101,8 @@ public class Order {
 	public void removeByTagId(UUID tagId) {
 		this.tags.removeIf(tag->tag.getId().equals(tagId));
 	}
+
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
+	}
 }

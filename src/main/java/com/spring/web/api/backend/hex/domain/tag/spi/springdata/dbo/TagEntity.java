@@ -1,4 +1,4 @@
-package com.spring.web.api.backend.hex.domain.db.springdata.dbo;
+package com.spring.web.api.backend.hex.domain.tag.spi.springdata.dbo;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,0 +1,53 @@
+package com.spring.web.api.backend.hex.domain.order.spi.springdata.adapter;
+
+import com.spring.web.api.backend.hex.domain.order.spi.springdata.db.SpringDataOrderRepository;
+import com.spring.web.api.backend.hex.domain.tag.spi.springdata.db.SpringDataTagRepository;
+import com.spring.web.api.backend.hex.domain.order.spi.springdata.mapper.OrderEntityMapper;
+import com.spring.web.api.backend.hex.domain.order.Order;
+import com.spring.web.api.backend.hex.domain.order.spi.OrderSpi;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+public class OrderDatabaseAdapter implements OrderSpi {
+	private final SpringDataOrderRepository orderRepository;
+	private final SpringDataTagRepository tagRepository;
+	private final OrderEntityMapper orderMapper;
+
+	public OrderDatabaseAdapter(SpringDataOrderRepository orderRepository, SpringDataTagRepository tagRepository, OrderEntityMapper orderMapper) {
+		this.orderRepository = orderRepository;
+		this.tagRepository = tagRepository;
+		this.orderMapper = orderMapper;
+	}
+
+
+	@Override
+	public Optional<Order> findById(UUID id) {
+		return Optional.of(orderMapper
+				.toDomain(orderRepository
+					.findById(id)
+					.orElseThrow(() -> new RuntimeException("Unable to find order id db"))));
+	}
+
+	@Override
+	public List<Order> findAll() {
+		List<Order> orders = new ArrayList<>();
+		orderRepository.findAll().forEach(orderEntity -> orders.add(orderMapper.toDomain(orderEntity)));
+		return orders;
+	}
+
+	@Override
+	public void save(Order order) {
+		order.setTags(
+			order.getTags().stream().map(tag->tagRepository.findByName(tag.getName())).collect(Collectors.toList()));
+		orderRepository.save(orderMapper.toDbo(order));
+	}
+
+	@Override
+	public void delete(UUID id) {
+		orderRepository.deleteById(id);
+	}
+}

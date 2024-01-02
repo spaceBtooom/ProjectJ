@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface OrderSpi {
-	Order findById(UUID id);
+	Optional<Order> findById(UUID id);
 	List<Order> findAll();
 
 	void save(Order order);

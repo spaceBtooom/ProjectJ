@@ -1,6 +1,6 @@
-package com.spring.web.api.backend.hex.domain.db.springdata.spi;
+package com.spring.web.api.backend.hex.domain.tag.spi.springdata.db;
 
-import com.spring.web.api.backend.hex.domain.db.springdata.dbo.TagEntity;
+import com.spring.web.api.backend.hex.domain.tag.spi.springdata.dbo.TagEntity;
 import com.spring.web.api.backend.hex.domain.tag.Tag;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

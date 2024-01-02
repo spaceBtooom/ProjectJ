@@ -27,9 +27,3 @@ INSERT INTO tags (name, alias_id)
 
 INSERT INTO tags (name, alias_id)
 	VALUES('Python',1);
-
-INSERT INTO vacancies (title, comment, price, create_at)
-	VALUES('hello','world',1,CURRENT_TIMESTAMP);
-
-INSERT INTO vacancies (title, comment, create_at)
-	VALUES('Python','Need a fella',CURRENT_TIMESTAMP);

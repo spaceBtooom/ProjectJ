@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS vacancies(
-	id uuid PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),,
+	id uuid PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
 	title VARCHAR (50) NOT NULL,
 	comment VARCHAR (256) NOT NULL,
 	price INT,

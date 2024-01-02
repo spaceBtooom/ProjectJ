@@ -1,28 +1,28 @@
-package com.spring.web.api.backend.hex.domain.db.springdata.spi;
+package com.spring.web.api.backend.hex.domain.tag.spi.springdata.spi;
 
-import com.spring.web.api.backend.hex.domain.db.springdata.mapper.TagEntityMapper;
+import com.spring.web.api.backend.hex.domain.tag.spi.springdata.db.SpringDataTagRepository;
+import com.spring.web.api.backend.hex.domain.tag.spi.springdata.mapper.TagEntityMapper;
 import com.spring.web.api.backend.hex.domain.tag.Tag;
 import com.spring.web.api.backend.hex.domain.tag.spi.TagSpi;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class TagDboRepository implements TagSpi {
+public class TagDatabaseAdapter implements TagSpi {
 
 
 	private final SpringDataTagRepository tagRepository;
 
 	private final TagEntityMapper tagMapper;
 
-    public TagDboRepository(SpringDataTagRepository tagRepository, TagEntityMapper tagMapper) {
-        this.tagRepository = tagRepository;
-        this.tagMapper = tagMapper;
-    }
+	public TagDatabaseAdapter(SpringDataTagRepository tagRepository, TagEntityMapper tagMapper) {
+		this.tagRepository = tagRepository;
+		this.tagMapper = tagMapper;
+	}
 
 
-    @Override
+	@Override
 	public void save(Tag tag) {
 		tagRepository.save(tagMapper.toDbo(tag));
 	}
