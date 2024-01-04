@@ -36,17 +36,20 @@ services:
 
         ports:
             -   '8080:8080'
+            -   '5005:5005'
         depends_on:
             -   'db'
         env_file:
             - .env
         environment:
+          - _JAVA_OPTIONS=-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
           # DB setting
           - SPRING_DATASOURCE_URL=${DB_URL:-jdbc:postgresql://db:5432/test_db}
           - SPRING_DATASOURCE_USERNAME=${DB_USER:-test}
           - SPRING_DATASOURCE_PASSWORD=${DB_PASS:-test}
           # Hibernate setting
           - SPRING_JPA_HIBERNATE_DDL_AUTO=none
+          - SPRING_JPA_SHOW_SQL=true
           # Frontend location
           - SPRING_WEB_RESOURCES_STATIC_LOCATIONS=classpath:/frontend/src/
           # OpenAPI setting
@@ -57,6 +60,7 @@ services:
           # File upload operation settings
           - SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE=${MAX_UPLOAD_FILE_SIZE:-1MB}
           - SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE=${MAX_UPLOAD_REQUEST_SIZE:-3MB}
+
 
         volumes:
           - 'app:/home/app/data'

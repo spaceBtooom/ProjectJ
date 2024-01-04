@@ -9,5 +9,5 @@ import java.util.UUID;
 
 @Repository
 public interface SpringDataTagRepository extends CrudRepository<TagEntity, UUID> {
-	Tag findByName(String name);
+	TagEntity findByName(String name);
 }

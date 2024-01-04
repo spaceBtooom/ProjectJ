@@ -1,5 +1,7 @@
 package com.spring.web.api.backend.hex.domain.order.api.spring.webmvc.dto;
 
+import com.spring.web.api.backend.hex.domain.orderFile.OrderFile;
+import com.spring.web.api.backend.hex.domain.orderFile.api.spring.webmvc.dto.OrderFileResponse;
 import com.spring.web.api.backend.hex.domain.tag.api.spring.webmvc.dto.TagRequest;
 import com.spring.web.api.backend.hex.domain.tag.api.spring.webmvc.dto.TagResponse;
 
@@ -15,7 +17,7 @@ public record OrderResponse (UUID id,
 				     String urlSource,
 				     ZonedDateTime expireAt,
 				     List<TagResponse> tags,
-				     Map<String, String> files,
+				     List<OrderFileResponse> files,
 				     ZonedDateTime createdAt,
 				     ZonedDateTime updatedAt) {
 }

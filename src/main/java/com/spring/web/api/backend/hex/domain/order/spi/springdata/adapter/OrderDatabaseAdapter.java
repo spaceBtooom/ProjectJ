@@ -1,8 +1,9 @@
 package com.spring.web.api.backend.hex.domain.order.spi.springdata.adapter;
 
 import com.spring.web.api.backend.hex.domain.order.spi.springdata.db.SpringDataOrderRepository;
+import com.spring.web.api.backend.hex.domain.order.spi.springdata.dbo.OrderEntity;
+import com.spring.web.api.backend.hex.domain.order.spi.springdata.mapper.GenericMapper.OrderEntityGenericMapper;
 import com.spring.web.api.backend.hex.domain.tag.spi.springdata.db.SpringDataTagRepository;
-import com.spring.web.api.backend.hex.domain.order.spi.springdata.mapper.OrderEntityMapper;
 import com.spring.web.api.backend.hex.domain.order.Order;
 import com.spring.web.api.backend.hex.domain.order.spi.OrderSpi;
 
@@ -15,9 +16,9 @@ import java.util.stream.Collectors;
 public class OrderDatabaseAdapter implements OrderSpi {
 	private final SpringDataOrderRepository orderRepository;
 	private final SpringDataTagRepository tagRepository;
-	private final OrderEntityMapper orderMapper;
+	private final OrderEntityGenericMapper orderMapper;
 
-	public OrderDatabaseAdapter(SpringDataOrderRepository orderRepository, SpringDataTagRepository tagRepository, OrderEntityMapper orderMapper) {
+	public OrderDatabaseAdapter(SpringDataOrderRepository orderRepository, SpringDataTagRepository tagRepository, OrderEntityGenericMapper orderMapper) {
 		this.orderRepository = orderRepository;
 		this.tagRepository = tagRepository;
 		this.orderMapper = orderMapper;
@@ -41,13 +42,19 @@ public class OrderDatabaseAdapter implements OrderSpi {
 
 	@Override
 	public void save(Order order) {
-		order.setTags(
+		OrderEntity orderEntity = orderMapper.toDbo(order);
+		orderEntity.setTags(
 			order.getTags().stream().map(tag->tagRepository.findByName(tag.getName())).collect(Collectors.toList()));
-		orderRepository.save(orderMapper.toDbo(order));
+		orderRepository.save(orderEntity);
 	}
 
 	@Override
 	public void delete(UUID id) {
 		orderRepository.deleteById(id);
+	}
+
+	@Override
+	public boolean existsById(UUID id) {
+		return orderRepository.existsById(id);
 	}
 }

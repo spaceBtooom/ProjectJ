@@ -1,7 +1,7 @@
 package com.spring.web.api.backend.hex.domain.tag.spi.springdata.spi;
 
 import com.spring.web.api.backend.hex.domain.tag.spi.springdata.db.SpringDataTagRepository;
-import com.spring.web.api.backend.hex.domain.tag.spi.springdata.mapper.TagEntityMapper;
+import com.spring.web.api.backend.hex.domain.tag.spi.springdata.mapper.GenericMapper.TagEntityGenericMapper;
 import com.spring.web.api.backend.hex.domain.tag.Tag;
 import com.spring.web.api.backend.hex.domain.tag.spi.TagSpi;
 
@@ -14,9 +14,9 @@ public class TagDatabaseAdapter implements TagSpi {
 
 	private final SpringDataTagRepository tagRepository;
 
-	private final TagEntityMapper tagMapper;
+	private final TagEntityGenericMapper tagMapper;
 
-	public TagDatabaseAdapter(SpringDataTagRepository tagRepository, TagEntityMapper tagMapper) {
+	public TagDatabaseAdapter(SpringDataTagRepository tagRepository, TagEntityGenericMapper tagMapper) {
 		this.tagRepository = tagRepository;
 		this.tagMapper = tagMapper;
 	}
@@ -39,7 +39,7 @@ public class TagDatabaseAdapter implements TagSpi {
 
 	@Override
 	public Tag findByName(String name) {
-		return tagRepository.findByName(name);
+		return tagMapper.toDomain(tagRepository.findByName(name));
 	}
 
 	@Override

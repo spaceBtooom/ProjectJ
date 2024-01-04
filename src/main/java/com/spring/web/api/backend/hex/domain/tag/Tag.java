@@ -11,7 +11,26 @@ public class Tag {
 	private Integer aliasId;
 
 	public Tag(String name, Integer aliasId) {
+		this.id=UUID.randomUUID();
 		this.name = name;
+		this.aliasId = aliasId;
+	}
+
+	public Tag(UUID id, String name, Integer aliasId) {
+		this.id = id;
+		this.name = name;
+		this.aliasId = aliasId;
+	}
+
+	public void setId(UUID id) {
+		this.id = id;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setAliasId(Integer aliasId) {
 		this.aliasId = aliasId;
 	}
 }

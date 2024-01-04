@@ -1,7 +1,11 @@
 package com.spring.web.api.backend;
 
-import com.spring.web.api.backend.hex.domain.order.spi.springdata.mapper.OrderEntityMapper;
-import com.spring.web.api.backend.hex.domain.tag.spi.springdata.mapper.TagEntityMapper;
+import com.spring.web.api.backend.hex.domain.order.spi.springdata.mapper.GenericMapper.OrderEntityGenericMapper;
+import com.spring.web.api.backend.hex.domain.orderFile.api.useCase.OrderFileSystemUseCase;
+import com.spring.web.api.backend.hex.domain.orderFile.spi.springdata.adapter.OrderFileDatabaseAdapter;
+import com.spring.web.api.backend.hex.domain.orderFile.spi.springdata.db.SpringDataOrderFileRepository;
+import com.spring.web.api.backend.hex.domain.orderFile.spi.springdata.mapper.GenericMapper.OrderFileEntityGenericMapper;
+import com.spring.web.api.backend.hex.domain.tag.spi.springdata.mapper.GenericMapper.TagEntityGenericMapper;
 import com.spring.web.api.backend.hex.domain.order.spi.springdata.adapter.OrderDatabaseAdapter;
 import com.spring.web.api.backend.hex.domain.order.spi.springdata.db.SpringDataOrderRepository;
 import com.spring.web.api.backend.hex.domain.tag.spi.springdata.db.SpringDataTagRepository;
@@ -23,18 +27,23 @@ public class SpringBackend {
 	}
 
 	@Bean
-	public OrderUseCase orderUseCase(SpringDataOrderRepository orderRepository, SpringDataTagRepository tagRepository, OrderEntityMapper orderMapper) {
+	public OrderUseCase orderUseCase(SpringDataOrderRepository orderRepository, SpringDataTagRepository tagRepository, OrderEntityGenericMapper orderMapper) {
 		return new OrderUseCase(new OrderDatabaseAdapter(orderRepository, tagRepository, orderMapper));
 	}
 
 	@Bean
-	public TagUseCase tagUseCase(SpringDataTagRepository tagRepository, TagEntityMapper tagMapper) {
+	public TagUseCase tagUseCase(SpringDataTagRepository tagRepository, TagEntityGenericMapper tagMapper) {
 		return new TagUseCase(new TagDatabaseAdapter(tagRepository, tagMapper));
 	}
 
 	@Bean
 	public VacancyUseCase vacancyUseCase(SpringDataVacancyRepository vacancyRepository, VacancyEntityMapper vacancyMapper){
 		return new VacancyUseCase(new VacancyDatabaseAdapter(vacancyRepository, vacancyMapper));
+	}
+
+	@Bean
+	public OrderFileSystemUseCase orderFileSystemUseCase(SpringDataOrderRepository orderRepository, SpringDataTagRepository tagRepository, OrderEntityGenericMapper orderMapper,  SpringDataOrderFileRepository orderFileRepository, OrderFileEntityGenericMapper mapper){
+		return new OrderFileSystemUseCase(new OrderDatabaseAdapter(orderRepository, tagRepository, orderMapper), new OrderFileDatabaseAdapter(orderFileRepository,mapper));
 	}
 
 

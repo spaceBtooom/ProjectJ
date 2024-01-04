@@ -13,4 +13,6 @@ public interface OrderSpi {
 	void save(Order order);
 	void delete(UUID id);
 
+	boolean existsById(UUID id);
+
 }

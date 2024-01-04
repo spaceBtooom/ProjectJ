@@ -1,6 +1,7 @@
 package com.spring.web.api.backend.hex.domain.order;
 
 
+import com.spring.web.api.backend.hex.domain.orderFile.OrderFile;
 import com.spring.web.api.backend.hex.domain.tag.Tag;
 
 import java.time.ZonedDateTime;
@@ -10,7 +11,7 @@ public class Order {
 
 	private UUID id;
 	List<Tag> tags;
-	Map<String, String> files;
+	List<OrderFile> files;
 	private String title;
 	private String comment;
 	private Integer price;
@@ -32,7 +33,7 @@ public class Order {
 		else{
 			this.tags = tags;
 		}
-		this.files = new HashMap<>();
+		this.files = new ArrayList<>();
 		this.title = title;
 		this.comment = comment;
 		this.price = price;
@@ -41,12 +42,34 @@ public class Order {
 		this.createAt = ZonedDateTime.now();
 	}
 
-	public Map<String, String> getFiles() {
-		return Collections.unmodifiableMap(files);
+	public Order(UUID id,
+			 List<Tag> tags,
+			 List<OrderFile> files,
+			 String title, String comment,
+			 Integer price, String urlSource,
+			 ZonedDateTime createAt, ZonedDateTime updateAt, ZonedDateTime expireAt) {
+		this.id = id;
+		if(tags == null){
+			this.tags=new ArrayList<>();
+		}
+		else{
+			this.tags = tags;
+		}
+		this.files = new ArrayList<>();
+		this.title = title;
+		this.comment = comment;
+		this.price = price;
+		this.urlSource = urlSource;
+		this.expireAt = expireAt;
+		this.createAt = ZonedDateTime.now();
+	}
+
+	public List<OrderFile> getFiles() {
+		return this.files;
 	}
 
 	public List<Tag> getTags(){
-		return Collections.unmodifiableList(this.tags);
+		return this.tags;
 	}
 
 	public UUID getId() {

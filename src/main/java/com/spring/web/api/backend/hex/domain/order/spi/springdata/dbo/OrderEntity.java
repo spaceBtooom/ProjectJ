@@ -1,6 +1,8 @@
 package com.spring.web.api.backend.hex.domain.order.spi.springdata.dbo;
 
 
+import com.spring.web.api.backend.hex.domain.orderFile.OrderFile;
+import com.spring.web.api.backend.hex.domain.orderFile.spi.springdata.dbo.OrderFileEntity;
 import com.spring.web.api.backend.hex.domain.tag.spi.springdata.dbo.TagEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -46,4 +48,6 @@ public class OrderEntity {
 		inverseJoinColumns = {@JoinColumn(name = "tag_id")}
 	)
 	List<TagEntity> tags;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "orderId")
+	List<OrderFileEntity> files;
 }
