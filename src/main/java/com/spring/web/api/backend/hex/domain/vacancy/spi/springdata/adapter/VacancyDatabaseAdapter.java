@@ -3,19 +3,21 @@ package com.spring.web.api.backend.hex.domain.vacancy.spi.springdata.adapter;
 import com.spring.web.api.backend.hex.domain.vacancy.Vacancy;
 import com.spring.web.api.backend.hex.domain.vacancy.spi.VacancySpi;
 import com.spring.web.api.backend.hex.domain.vacancy.spi.springdata.db.SpringDataVacancyRepository;
-import com.spring.web.api.backend.hex.domain.vacancy.spi.springdata.mapper.VacancyEntityMapper;
+import com.spring.web.api.backend.hex.domain.vacancy.spi.springdata.mapper.generic.VacancyEntityGenericMapper;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Service
 public class VacancyDatabaseAdapter implements VacancySpi {
 
 	private final SpringDataVacancyRepository vacancyRepository;
-	private final VacancyEntityMapper vacancyMapper;
+	private final VacancyEntityGenericMapper vacancyMapper;
 
-	public VacancyDatabaseAdapter(SpringDataVacancyRepository vacancyRepository, VacancyEntityMapper vacancyMapper) {
+	public VacancyDatabaseAdapter(SpringDataVacancyRepository vacancyRepository, VacancyEntityGenericMapper vacancyMapper) {
 		this.vacancyRepository = vacancyRepository;
 		this.vacancyMapper = vacancyMapper;
 	}

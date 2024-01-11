@@ -15,4 +15,5 @@ public interface OrderSpi {
 
 	boolean existsById(UUID id);
 
+	void update(Order order);
 }

@@ -68,7 +68,7 @@ services:
 #      Второй сервис (контейнер): БД.
 #      Этот сервис назван 'db'.
     db:
-        image: postgres:15.0
+        image: postgres:latest
         container_name: db
         ports:
             - '5432:5432'

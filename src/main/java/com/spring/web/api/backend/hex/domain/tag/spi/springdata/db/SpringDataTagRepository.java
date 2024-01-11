@@ -10,4 +10,5 @@ import java.util.UUID;
 @Repository
 public interface SpringDataTagRepository extends CrudRepository<TagEntity, UUID> {
 	TagEntity findByName(String name);
+	boolean existsByNameAndAliasId(String name, Integer aliasId);
 }

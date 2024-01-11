@@ -47,8 +47,8 @@ public class OrderFileSystemUseCase implements OrderFileApi {
 			return null;
 		}
 
-
-		Path uploadPath = Paths.get(FILESYSTEM_DIR_NAME).resolve(orderId.toString());
+		String filecode = RandomStringUtils.randomAlphabetic(8);
+		Path uploadPath = Paths.get(FILESYSTEM_DIR_NAME).resolve(orderId.toString()).resolve(filecode);
 		if(!Files.exists(uploadPath)){
 			Files.createDirectories(uploadPath);
 		}
@@ -56,10 +56,9 @@ public class OrderFileSystemUseCase implements OrderFileApi {
 		String originalFilename = file.getOriginalFilename();
 		String fileName = StringUtils.cleanPath(originalFilename);
 		long size = file.getSize();
-		String filecode = RandomStringUtils.randomAlphabetic(8);
 
 		try (InputStream inputStream = file.getInputStream()) {
-			Path filePath = uploadPath.resolve(filecode);
+			Path filePath = uploadPath.resolve(fileName);
 			Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException ioe) {
 			throw new IOException("Could not save file: " + fileName, ioe);
@@ -88,11 +87,12 @@ public class OrderFileSystemUseCase implements OrderFileApi {
 			);
 			return null;
 		}
-		Path dirPath = Paths.get(FILESYSTEM_DIR_NAME).resolve(orderId.toString());
+		String filename = orderFileSpi.findFilenameByFilecode(filecode);
+		Path dirPath = Paths.get(FILESYSTEM_DIR_NAME).resolve(orderId.toString()).resolve(filecode);
 		AtomicReference<Path> foundFile = new AtomicReference<>();
 
 		Files.list(dirPath).forEach(file->{
-			if(file.getFileName().toString().startsWith(filecode)){
+			if(file.getFileName().toString().startsWith(filename)){
 				foundFile.set(file);
 			}
 		});

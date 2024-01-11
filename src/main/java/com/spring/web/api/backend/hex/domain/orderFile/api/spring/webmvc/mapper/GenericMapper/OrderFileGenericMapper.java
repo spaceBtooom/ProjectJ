@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 public class OrderFileGenericMapper implements GenericMapperRDR<OrderFileRequest, OrderFile, OrderFileResponse> {
 	@Override
 	public OrderFile toDomain(OrderFileRequest orderFileRequest) {
+		if(orderFileRequest == null){
+			return null;
+		}
 		return new OrderFile("",
 			orderFileRequest.filename(),
 			orderFileRequest.orderId());
@@ -17,6 +20,9 @@ public class OrderFileGenericMapper implements GenericMapperRDR<OrderFileRequest
 
 	@Override
 	public OrderFileResponse toResponse(OrderFile orderFile) {
+		if(orderFile == null){
+			return null;
+		}
 		return new OrderFileResponse(orderFile.getFilename(),
 			"/api/order/file/" + orderFile.getOrderId() + "/" + orderFile.getFilecode());
 	}

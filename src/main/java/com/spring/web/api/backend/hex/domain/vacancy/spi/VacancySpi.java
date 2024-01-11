@@ -11,3 +11,4 @@ public interface VacancySpi {
 	Optional<Vacancy> findById(UUID id);
 	Optional<Vacancy> save(Vacancy vacancy);
 }
+

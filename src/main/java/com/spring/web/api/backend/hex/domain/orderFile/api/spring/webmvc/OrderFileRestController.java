@@ -1,6 +1,8 @@
 package com.spring.web.api.backend.hex.domain.orderFile.api.spring.webmvc;
 
 import com.spring.web.api.backend.hex.domain.orderFile.api.OrderFileApi;
+import com.spring.web.api.backend.hex.domain.orderFile.api.spring.webmvc.constraint.FileFormatConstraint;
+import com.spring.web.api.backend.hex.domain.orderFile.api.spring.webmvc.constraint.MaxAttachedFileSizeConstraint;
 import com.spring.web.api.backend.hex.domain.orderFile.api.spring.webmvc.dto.OrderFileResponse;
 import com.spring.web.api.backend.hex.domain.orderFile.api.spring.webmvc.mapper.GenericMapper.OrderFileGenericMapper;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -9,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Validated
 @RestController
 @RequestMapping("/order/file")
 public class OrderFileRestController {
@@ -45,8 +49,8 @@ public class OrderFileRestController {
 	ResponseEntity<?> uploadFileForOrder(
 		@RequestParam("id")
 		UUID id,
-		@RequestParam("file")
-		List<MultipartFile> multipartFile
+		@RequestParam("file")@MaxAttachedFileSizeConstraint
+		List<@FileFormatConstraint MultipartFile> multipartFile
 	) throws IOException {
 		if(multipartFile.isEmpty()){
 			return new ResponseEntity<>("There are no files to add", HttpStatus.NO_CONTENT);

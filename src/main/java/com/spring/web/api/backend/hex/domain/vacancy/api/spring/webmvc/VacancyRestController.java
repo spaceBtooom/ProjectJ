@@ -4,7 +4,7 @@ import com.spring.web.api.backend.hex.domain.vacancy.Vacancy;
 import com.spring.web.api.backend.hex.domain.vacancy.api.VacancyApi;
 import com.spring.web.api.backend.hex.domain.vacancy.api.spring.webmvc.dto.VacancyRequest;
 import com.spring.web.api.backend.hex.domain.vacancy.api.spring.webmvc.dto.VacancyResponse;
-import com.spring.web.api.backend.hex.domain.vacancy.api.spring.webmvc.mapper.VacancyMapper;
+import com.spring.web.api.backend.hex.domain.vacancy.api.spring.webmvc.mapper.generic.VacancyGenericMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,9 +23,9 @@ import java.util.UUID;
 @Tag(name="Vacancies API")
 public class VacancyRestController {
 	private final VacancyApi vacancyApi;
-	private final VacancyMapper vacancyMapper;
+	private final VacancyGenericMapper vacancyMapper;
 
-	public VacancyRestController(VacancyApi vacancyApi, VacancyMapper vacancyMapper) {
+	public VacancyRestController(VacancyApi vacancyApi, VacancyGenericMapper vacancyMapper) {
 		this.vacancyApi = vacancyApi;
 		this.vacancyMapper = vacancyMapper;
 	}
@@ -68,7 +68,7 @@ public class VacancyRestController {
 	ResponseEntity<VacancyResponse> addVacancy(@RequestBody
 								 @Parameter(name = "vacancy", description = "Received vacancy")
 								 VacancyRequest vacancyRequest) {
-		return vacancyApi.save(vacancyMapper.toVacancy(vacancyRequest))
+		return vacancyApi.save(vacancyMapper.toDomain(vacancyRequest))
 			.map(vacancy-> ResponseEntity
 				.ok(vacancyMapper.toResponse(vacancy)))
 			.orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));

@@ -2,6 +2,7 @@ package com.spring.web.api.backend.hex.domain.orderFile.spi;
 
 import com.spring.web.api.backend.hex.domain.orderFile.OrderFile;
 import org.springframework.core.io.Resource;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -17,4 +18,7 @@ public interface OrderFileSpi {
 	boolean existsByOrderId(UUID id);
 
 	boolean existsByFilecode(String filecode);
+
+
+	String findFilenameByFilecode(String filecode);
 }

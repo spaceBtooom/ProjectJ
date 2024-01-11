@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 public class TagEntityGenericMapper implements GenericMapperDE<Tag, TagEntity> {
 	@Override
 	public TagEntity toDbo(Tag tag) {
+		if(tag == null){
+			return null;
+		}
 		return new TagEntity(tag.getId(),
 			tag.getName(),
 			tag.getAliasId());
@@ -16,6 +19,9 @@ public class TagEntityGenericMapper implements GenericMapperDE<Tag, TagEntity> {
 
 	@Override
 	public Tag toDomain(TagEntity tagEntity) {
+		if(tagEntity == null){
+			return null;
+		}
 		return new Tag(tagEntity.getId(),
 			tagEntity.getName(),
 			tagEntity.getAliasId());

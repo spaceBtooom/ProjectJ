@@ -10,7 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,21 +33,21 @@ public class OrderEntity {
 
 	@Column(name="create_at")
 	@CreationTimestamp(source = SourceType.DB)
-	private ZonedDateTime createAt;
+	private OffsetDateTime createAt;
 
 	@UpdateTimestamp(source = SourceType.DB)
 	@Column(name="update_at")
-	private ZonedDateTime updateAt;
+	private OffsetDateTime updateAt;
 
 	@Column(name="expire_at")
-	private ZonedDateTime expireAt;
+	private OffsetDateTime expireAt;
 
 	@ManyToMany(cascade = CascadeType.PERSIST)
 	@JoinTable(name = "order_tags",
 		joinColumns = {@JoinColumn(name = "order_id")},
 		inverseJoinColumns = {@JoinColumn(name = "tag_id")}
 	)
-	List<TagEntity> tags;
+	private List<TagEntity> tags;
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "orderId")
-	List<OrderFileEntity> files;
+	private List<OrderFileEntity> files;
 }

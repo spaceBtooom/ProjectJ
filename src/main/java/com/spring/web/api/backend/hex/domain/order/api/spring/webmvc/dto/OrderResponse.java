@@ -5,7 +5,7 @@ import com.spring.web.api.backend.hex.domain.orderFile.api.spring.webmvc.dto.Ord
 import com.spring.web.api.backend.hex.domain.tag.api.spring.webmvc.dto.TagRequest;
 import com.spring.web.api.backend.hex.domain.tag.api.spring.webmvc.dto.TagResponse;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -15,10 +15,10 @@ public record OrderResponse (UUID id,
 				     String comment,
 				     Integer price,
 				     String urlSource,
-				     ZonedDateTime expireAt,
+				     OffsetDateTime expireAt,
 				     List<TagResponse> tags,
 				     List<OrderFileResponse> files,
-				     ZonedDateTime createdAt,
-				     ZonedDateTime updatedAt) {
+				     OffsetDateTime createdAt,
+				     OffsetDateTime updatedAt) {
 }
 

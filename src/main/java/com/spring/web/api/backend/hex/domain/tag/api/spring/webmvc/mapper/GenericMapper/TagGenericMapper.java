@@ -10,12 +10,18 @@ import org.springframework.stereotype.Service;
 public class TagGenericMapper implements GenericMapperRDR<TagRequest, Tag, TagResponse> {
 	@Override
 	public Tag toDomain(TagRequest tagRequest) {
+		if (tagRequest == null) {
+			return null;
+		}
 		return new Tag(tagRequest.name(),
 			tagRequest.aliasId());
 	}
 
 	@Override
 	public TagResponse toResponse(Tag tag) {
+		if (tag == null) {
+			return null;
+		}
 		return new TagResponse(tag.getName(),
 			tag.getAliasId());
 	}

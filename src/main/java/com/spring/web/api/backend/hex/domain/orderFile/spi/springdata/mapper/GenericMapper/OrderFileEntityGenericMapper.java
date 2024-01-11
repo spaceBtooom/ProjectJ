@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 public class OrderFileEntityGenericMapper implements GenericMapperDE<OrderFile, OrderFileEntity> {
 	@Override
 	public OrderFileEntity toDbo(OrderFile orderFile) {
+		if(orderFile == null){
+			return null;
+		}
 		return new OrderFileEntity(orderFile.getId(),
 			orderFile.getFilecode(),
 			orderFile.getFilename(),
@@ -17,6 +20,9 @@ public class OrderFileEntityGenericMapper implements GenericMapperDE<OrderFile, 
 
 	@Override
 	public OrderFile toDomain(OrderFileEntity orderFileEntity) {
+		if(orderFileEntity == null){
+			return null;
+		}
 		return new OrderFile(orderFileEntity.getId(),
 			orderFileEntity.getFilecode(),
 			orderFileEntity.getFilename(),

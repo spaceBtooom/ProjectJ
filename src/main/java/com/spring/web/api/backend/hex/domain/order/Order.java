@@ -4,28 +4,28 @@ package com.spring.web.api.backend.hex.domain.order;
 import com.spring.web.api.backend.hex.domain.orderFile.OrderFile;
 import com.spring.web.api.backend.hex.domain.tag.Tag;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.*;
 
 public class Order {
 
 	private UUID id;
-	List<Tag> tags;
-	List<OrderFile> files;
+	private List<Tag> tags;
+	private List<OrderFile> files;
 	private String title;
 	private String comment;
 	private Integer price;
 	private String urlSource;
-	private ZonedDateTime createAt;
-	private ZonedDateTime updateAt;
-	private ZonedDateTime expireAt;
+	private OffsetDateTime createAt;
+	private OffsetDateTime updateAt;
+	private OffsetDateTime expireAt;
 
 	public Order(final List<Tag> tags,
 			 String title,
 			 String comment,
 			 Integer price,
 			 String urlSource,
-			 ZonedDateTime expireAt) {
+			 OffsetDateTime expireAt) {
 		this.id = UUID.randomUUID();
 		if(tags == null){
 			this.tags=new ArrayList<>();
@@ -39,7 +39,7 @@ public class Order {
 		this.price = price;
 		this.urlSource = urlSource;
 		this.expireAt = expireAt;
-		this.createAt = ZonedDateTime.now();
+		this.createAt = OffsetDateTime.now();
 	}
 
 	public Order(UUID id,
@@ -47,7 +47,7 @@ public class Order {
 			 List<OrderFile> files,
 			 String title, String comment,
 			 Integer price, String urlSource,
-			 ZonedDateTime createAt, ZonedDateTime updateAt, ZonedDateTime expireAt) {
+			 OffsetDateTime createAt, OffsetDateTime updateAt, OffsetDateTime expireAt) {
 		this.id = id;
 		if(tags == null){
 			this.tags=new ArrayList<>();
@@ -55,13 +55,19 @@ public class Order {
 		else{
 			this.tags = tags;
 		}
-		this.files = new ArrayList<>();
+		if(files == null){
+			this.files = new ArrayList<>();
+		}
+		else{
+			this.files = files;
+		}
+
 		this.title = title;
 		this.comment = comment;
 		this.price = price;
 		this.urlSource = urlSource;
 		this.expireAt = expireAt;
-		this.createAt = ZonedDateTime.now();
+		this.createAt = OffsetDateTime.now();
 	}
 
 	public List<OrderFile> getFiles() {
@@ -92,15 +98,15 @@ public class Order {
 		return urlSource;
 	}
 
-	public ZonedDateTime getCreateAt() {
+	public OffsetDateTime getCreateAt() {
 		return createAt;
 	}
 
-	public ZonedDateTime getUpdateAt() {
+	public OffsetDateTime getUpdateAt() {
 		return updateAt;
 	}
 
-	public ZonedDateTime getExpireAt() {
+	public OffsetDateTime getExpireAt() {
 		return expireAt;
 	}
 
@@ -121,11 +127,19 @@ public class Order {
 		this.tags.add(tag);
 	}
 
+	public void addTags(final List<Tag> tag){
+		this.tags= new ArrayList<>(this.tags);
+		this.tags.addAll(tag);
+	}
 	public void removeByTagId(UUID tagId) {
 		this.tags.removeIf(tag->tag.getId().equals(tagId));
 	}
 
 	public void setTags(List<Tag> tags) {
 		this.tags = tags;
+	}
+
+	public void updateOrder(){
+		this.updateAt=OffsetDateTime.now();
 	}
 }

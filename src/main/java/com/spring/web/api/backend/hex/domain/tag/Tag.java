@@ -33,4 +33,12 @@ public class Tag {
 	public void setAliasId(Integer aliasId) {
 		this.aliasId = aliasId;
 	}
+
+	@Override
+	public String toString() {
+		return "Tag{" +
+			"name='" + name + '\'' +
+			", aliasId=" + aliasId +
+			'}';
+	}
 }

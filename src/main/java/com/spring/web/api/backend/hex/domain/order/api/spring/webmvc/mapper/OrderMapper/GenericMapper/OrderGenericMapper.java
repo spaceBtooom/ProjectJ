@@ -14,13 +14,16 @@ public class OrderGenericMapper implements GenericMapperRDR<OrderRequest, Order,
 	private final OrderFileGenericMapper orderFileMapper;
 	private final TagGenericMapper tagFileMapper;
 
-    public OrderGenericMapper(OrderFileGenericMapper orderFileMapper, TagGenericMapper tagFileMapper) {
-        this.orderFileMapper = orderFileMapper;
-        this.tagFileMapper = tagFileMapper;
-    }
+	public OrderGenericMapper(OrderFileGenericMapper orderFileMapper, TagGenericMapper tagFileMapper) {
+		this.orderFileMapper = orderFileMapper;
+		this.tagFileMapper = tagFileMapper;
+	}
 
-    @Override
+	@Override
 	public Order toDomain(OrderRequest orderRequest) {
+		if (orderRequest == null) {
+			return null;
+		}
 		return new Order(
 			orderRequest.tags()
 				.stream()
@@ -35,6 +38,9 @@ public class OrderGenericMapper implements GenericMapperRDR<OrderRequest, Order,
 
 	@Override
 	public OrderResponse toResponse(Order order) {
+		if (order == null) {
+			return null;
+		}
 		return new OrderResponse(
 			order.getId(),
 			order.getTitle(),

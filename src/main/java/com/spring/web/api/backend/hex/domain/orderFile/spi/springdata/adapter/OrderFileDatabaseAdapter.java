@@ -4,11 +4,13 @@ import com.spring.web.api.backend.hex.domain.orderFile.OrderFile;
 import com.spring.web.api.backend.hex.domain.orderFile.spi.OrderFileSpi;
 import com.spring.web.api.backend.hex.domain.orderFile.spi.springdata.db.SpringDataOrderFileRepository;
 import com.spring.web.api.backend.hex.domain.orderFile.spi.springdata.mapper.GenericMapper.OrderFileEntityGenericMapper;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Service
 public class OrderFileDatabaseAdapter implements OrderFileSpi {
 	private final SpringDataOrderFileRepository orderFileRepository;
 	private final OrderFileEntityGenericMapper orderFileMapper;
@@ -44,5 +46,10 @@ public class OrderFileDatabaseAdapter implements OrderFileSpi {
 	@Override
 	public boolean existsByFilecode(String filecode) {
 		return orderFileRepository.existsByFilecode(filecode);
+	}
+
+	@Override
+	public String findFilenameByFilecode(String filecode) {
+		return orderFileRepository.findByFilecode(filecode).get().getFilename();
 	}
 }

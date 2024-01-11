@@ -39,4 +39,9 @@ public class TagUseCase implements TagApi {
 	public List<Tag> findAll() {
 		return tagSpi.findAll();
 	}
+
+	@Override
+	public boolean existsByNameAndAliasId(String name, Integer aliasId) {
+		return tagSpi.existsByNameAndAliasId(name, aliasId);
+	}
 }

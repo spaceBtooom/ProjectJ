@@ -4,11 +4,13 @@ import com.spring.web.api.backend.hex.domain.tag.spi.springdata.db.SpringDataTag
 import com.spring.web.api.backend.hex.domain.tag.spi.springdata.mapper.GenericMapper.TagEntityGenericMapper;
 import com.spring.web.api.backend.hex.domain.tag.Tag;
 import com.spring.web.api.backend.hex.domain.tag.spi.TagSpi;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Service
 public class TagDatabaseAdapter implements TagSpi {
 
 
@@ -47,5 +49,10 @@ public class TagDatabaseAdapter implements TagSpi {
 		List<Tag> tags = new ArrayList<>();
 		tagRepository.findAll().forEach(tagEntity -> tags.add(tagMapper.toDomain(tagEntity)));
 		return tags;
+	}
+
+	@Override
+	public boolean existsByNameAndAliasId(String name, Integer aliasId) {
+		return tagRepository.existsByNameAndAliasId(name, aliasId);
 	}
 }

@@ -13,5 +13,6 @@ public interface TagApi {
 	Tag findByName(String name);
 
 	List<Tag> findAll();
+	boolean existsByNameAndAliasId(String name, Integer aliasId);
 
 }
