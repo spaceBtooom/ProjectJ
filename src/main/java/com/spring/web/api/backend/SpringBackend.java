@@ -1,14 +1,14 @@
 package com.spring.web.api.backend;
 
-import com.spring.web.api.backend.hex.domain.order.spi.OrderSpi;
-import com.spring.web.api.backend.hex.domain.orderFile.api.useCase.OrderFileSystemUseCase;
-import com.spring.web.api.backend.hex.domain.orderFile.spi.OrderFileSpi;
-import com.spring.web.api.backend.hex.domain.tag.api.TagApi;
-import com.spring.web.api.backend.hex.domain.tag.spi.TagSpi;
-import com.spring.web.api.backend.hex.domain.order.api.useCase.OrderUseCase;
-import com.spring.web.api.backend.hex.domain.tag.api.useCase.TagUseCase;
-import com.spring.web.api.backend.hex.domain.vacancy.api.useCase.VacancyUseCase;
-import com.spring.web.api.backend.hex.domain.vacancy.spi.VacancySpi;
+import com.spring.web.api.backend.hex.order.spi.OrderSpi;
+import com.spring.web.api.backend.hex.orderFile.api.useCase.OrderFileSystemUseCase;
+import com.spring.web.api.backend.hex.orderFile.spi.OrderFileSpi;
+import com.spring.web.api.backend.hex.tag.api.TagApi;
+import com.spring.web.api.backend.hex.tag.spi.TagSpi;
+import com.spring.web.api.backend.hex.order.api.useCase.OrderUseCase;
+import com.spring.web.api.backend.hex.tag.api.useCase.TagUseCase;
+import com.spring.web.api.backend.hex.vacancy.api.useCase.VacancyUseCase;
+import com.spring.web.api.backend.hex.vacancy.spi.VacancySpi;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
