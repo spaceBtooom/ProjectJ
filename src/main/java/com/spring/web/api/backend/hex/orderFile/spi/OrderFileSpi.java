@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public interface OrderFileSpi {
 	public Optional<OrderFile> save(OrderFile file);
+
 	public List<OrderFile> findByOrderId(UUID id);
 
 	Integer countByOrderId(UUID id);
@@ -16,6 +17,9 @@ public interface OrderFileSpi {
 
 	boolean existsByFilecode(String filecode);
 
-
 	String findFilenameByFilecode(String filecode);
+
+	long deleteByOrderIdAndFilecode(UUID id, String filecode);
+
+	long deleteByOrderId(UUID id);
 }

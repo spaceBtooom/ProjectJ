@@ -1,8 +1,6 @@
 package com.spring.web.api.backend.hex.tag.domain;
 
-import com.spring.web.api.backend.hex.shared.DomainException;
-
-public class TagAliasException extends DomainException {
+public class TagAliasException extends RuntimeException {
 	public TagAliasException() {
 	}
 

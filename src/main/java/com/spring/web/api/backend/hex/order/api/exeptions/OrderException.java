@@ -1,6 +1,6 @@
 package com.spring.web.api.backend.hex.order.api.exeptions;
 
-public class OrderException extends Exception {
+public class OrderException extends RuntimeException {
 	public OrderException() {
 	}
 

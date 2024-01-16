@@ -14,7 +14,7 @@ public class TagEntityGenericMapper implements GenericMapperDE<Tag, TagEntity> {
 		}
 		return new TagEntity(tag.getId(),
 			tag.getName(),
-			tag.getAliasId());
+			tag.getAliasName());
 	}
 
 	@Override
@@ -24,6 +24,6 @@ public class TagEntityGenericMapper implements GenericMapperDE<Tag, TagEntity> {
 		}
 		return new Tag(tagEntity.getId(),
 			tagEntity.getName(),
-			tagEntity.getAliasId());
+			tagEntity.getAliasName());
 	}
 }

@@ -1,5 +1,6 @@
 package com.spring.web.api.backend.hex.order.api.useCase;
 
+import com.spring.web.api.backend.hex.order.api.exeptions.OrderIdNotFoundException;
 import com.spring.web.api.backend.hex.order.domain.Order;
 import com.spring.web.api.backend.hex.order.api.exeptions.OrderTagNoAvailableException;
 import com.spring.web.api.backend.hex.tag.domain.Tag;
@@ -21,10 +22,10 @@ public class OrderUseCase implements OrderApi {
 	}
 
 	@Override
-	public Optional<Order> save(final Order order) throws OrderTagNoAvailableException {
+	public Optional<Order> save(final Order order){
 		List<Tag> unexistsTags= new ArrayList<>();
 		order.getTags().forEach(tag -> {
-			if(!tagApi.existsByNameAndAliasId(tag.getName(),tag.getAliasId()))
+			if(!tagApi.existsByNameAndAliasId(tag.getName(),tag.getAliasName()))
 				unexistsTags.add(tag);}
 		);
 		if(!unexistsTags.isEmpty()){
@@ -48,9 +49,7 @@ public class OrderUseCase implements OrderApi {
 	@Override
 	public List<Tag> addTags(UUID id, List<Tag> tags) {
 		Optional<Order> foundOrder = this.orderSpi.findById(id);
-		if (foundOrder.isEmpty()) {
-			return null;
-		}
+
 		List<Tag> uniqTags = new ArrayList<>(tags);
 		uniqTags.removeIf(tag -> foundOrder
 			.get()
@@ -60,6 +59,7 @@ public class OrderUseCase implements OrderApi {
 
 		if (tags.isEmpty())
 			return null;
+
 		foundOrder.get().addTags(tags);
 		orderSpi.update(foundOrder.get());
 		return tags;
@@ -67,18 +67,29 @@ public class OrderUseCase implements OrderApi {
 
 	@Override
 	public void deleteById(UUID id) {
-		this.orderSpi.delete(id);
+		if(!orderSpi.existsById(id)){
+			throw new OrderIdNotFoundException(id);
+		}
+		orderSpi.delete(id);
 	}
 
 	@Override
 	public void deleteTag(UUID id, UUID tagId) {
 		this.orderSpi.findById(id)
-			.ifPresentOrElse(order -> {
-				order.removeByTagId(tagId);
-				this.orderSpi.save(order);
-			}, () -> {
-				log.error("deleteTag in Order: there is no order with id: " + id);
-			});
+			.ifPresentOrElse(
+				order -> {
+					order.removeByTagId(tagId);
+					this.orderSpi.save(order);
+				},
+				()->{
+					throw new OrderIdNotFoundException(id);
+				}
+			);
 
+	}
+
+	@Override
+	public boolean existsById(UUID id) {
+		return orderSpi.existsById(id);
 	}
 }

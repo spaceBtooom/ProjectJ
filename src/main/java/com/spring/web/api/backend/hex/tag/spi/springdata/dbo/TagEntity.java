@@ -15,6 +15,6 @@ public class TagEntity {
 	@Id
 	private UUID id;
 	private String name;
-	@Column(name="alias_id")
-	private Integer aliasId;
+	@Column(name="alias_name")
+	private String aliasName;
 }

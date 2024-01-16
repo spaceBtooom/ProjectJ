@@ -9,8 +9,16 @@ import java.util.UUID;
 
 public interface SpringDataOrderFileRepository extends CrudRepository<OrderFileEntity, UUID> {
 	Integer countByOrderId(UUID id);
+
 	List<OrderFileEntity> findByOrderId(UUID id);
+
 	boolean existsByFilecode(String filecode);
+
 	boolean existsByOrderId(UUID id);
+
 	Optional<OrderFileEntity> findByFilecode(String filecode);
+
+	long deleteByOrderIdAndFilecode(UUID id, String filecode);
+
+	long deleteByOrderId(UUID id);
 }

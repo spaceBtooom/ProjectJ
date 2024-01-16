@@ -1,5 +1,6 @@
 package com.spring.web.api.backend.hex.tag.api.spring.webmvc.exceptions;
 
+import com.spring.web.api.backend.hex.tag.api.exception.TagCannotBeSaveException;
 import com.spring.web.api.backend.hex.tag.domain.TagAliasException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,5 +12,10 @@ public class TagExceptionHandler {
 	@ExceptionHandler(TagAliasException.class)
 	public ResponseEntity<String> handleTagAliasException(TagAliasException exception){
 		return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+	}
+
+	@ExceptionHandler(TagCannotBeSaveException.class)
+	public ResponseEntity<String> handleTagCannotBeSaveException(TagCannotBeSaveException exception){
+		return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }

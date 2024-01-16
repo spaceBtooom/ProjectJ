@@ -44,11 +44,7 @@ public class Order {
 		this.comment = comment;
 		this.price = price;
 		this.urlSource = urlSource;
-
 		this.createAt = OffsetDateTime.now();
-		if (expireAt.isBefore(this.createAt)) {
-			throw new OrderTimeException("Expired time is not valid. Must be after current time");
-		}
 		this.expireAt = expireAt;
 
 	}

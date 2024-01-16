@@ -14,6 +14,7 @@ public interface TagApi {
 	Tag findByName(String name);
 
 	List<Tag> findAll();
-	boolean existsByNameAndAliasId(String name, Integer aliasId);
+	boolean existsByNameAndAliasId(String name, String aliasName);
 
+	List<Tag> saveAll(List<Tag> list);
 }

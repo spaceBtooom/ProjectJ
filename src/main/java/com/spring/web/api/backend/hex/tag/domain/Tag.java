@@ -8,21 +8,18 @@ import java.util.UUID;
 public class Tag {
 	private UUID id;
 	private String name;
-	private Integer aliasId;
+	private String aliasName;
 
-	public Tag(String name, Integer aliasId) {
+	public Tag(String name, String aliasName) {
 		this.id=UUID.randomUUID();
 		this.name = name;
-		if(aliasId < 0 || aliasId >= Alias.values().length){
-			throw new TagAliasException("There is no alias with id " + aliasId);
-		}
-		this.aliasId = aliasId;
+		this.aliasName = aliasName;
 	}
 
-	public Tag(UUID id, String name, Integer aliasId) {
+	public Tag(UUID id, String name, String aliasName) {
 		this.id = id;
 		this.name = name;
-		this.aliasId = aliasId;
+		this.aliasName = aliasName;
 	}
 
 	public void setId(UUID id) {
@@ -33,15 +30,14 @@ public class Tag {
 		this.name = name;
 	}
 
-	public void setAliasId(Integer aliasId) {
-		this.aliasId = aliasId;
+	public void setAliasName(String aliasName) {
+		this.aliasName = aliasName;
 	}
-
 	@Override
 	public String toString() {
 		return "Tag{" +
 			"name='" + name + '\'' +
-			", aliasId=" + aliasId +
+			", aliasName=" + aliasName +
 			'}';
 	}
 }

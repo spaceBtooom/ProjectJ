@@ -2,7 +2,6 @@ package com.spring.web.api.backend.hex.order.spi.springdata.mapper.GenericMapper
 
 import com.spring.web.api.backend.GenericMapperDE;
 import com.spring.web.api.backend.hex.order.domain.Order;
-import com.spring.web.api.backend.hex.order.domain.OrderTimeException;
 import com.spring.web.api.backend.hex.order.spi.springdata.dbo.OrderEntity;
 import com.spring.web.api.backend.hex.orderFile.spi.springdata.mapper.GenericMapper.OrderFileEntityGenericMapper;
 import com.spring.web.api.backend.hex.tag.spi.springdata.mapper.GenericMapper.TagEntityGenericMapper;

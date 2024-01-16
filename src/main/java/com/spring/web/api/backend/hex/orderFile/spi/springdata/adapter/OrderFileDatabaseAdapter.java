@@ -4,6 +4,7 @@ import com.spring.web.api.backend.hex.orderFile.domain.OrderFile;
 import com.spring.web.api.backend.hex.orderFile.spi.OrderFileSpi;
 import com.spring.web.api.backend.hex.orderFile.spi.springdata.db.SpringDataOrderFileRepository;
 import com.spring.web.api.backend.hex.orderFile.spi.springdata.mapper.GenericMapper.OrderFileEntityGenericMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -51,5 +52,23 @@ public class OrderFileDatabaseAdapter implements OrderFileSpi {
 	@Override
 	public String findFilenameByFilecode(String filecode) {
 		return orderFileRepository.findByFilecode(filecode).get().getFilename();
+	}
+
+	// Before each delete jpa take entities with select, and only after that it delete
+	// Work around annotation @Query and @Modifying
+	// Problem: persist context have to be updated since DML operations
+	@Transactional
+	@Override
+	public long deleteByOrderIdAndFilecode(UUID id, String filecode) {
+		return orderFileRepository.deleteByOrderIdAndFilecode(id, filecode);
+	}
+
+	// Before each delete jpa take entities with select, and only after that it delete
+	// Work around annotation @Query and @Modifying
+	// Problem: persist context have to be updated since DML operations
+	@Transactional
+	@Override
+	public long deleteByOrderId(UUID id) {
+		return orderFileRepository.deleteByOrderId(id);
 	}
 }

@@ -1,4 +1,4 @@
-package com.spring.web.api.backend.hex.orderFile.api.spring.webmvc.exception;
+package com.spring.web.api.backend.hex.shared.exception;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;

@@ -1,5 +1,6 @@
 package com.spring.web.api.backend.hex.orderFile.api.useCase;
 
+import com.spring.web.api.backend.hex.order.api.exeptions.OrderIdNotFoundException;
 import com.spring.web.api.backend.hex.order.spi.OrderSpi;
 import com.spring.web.api.backend.hex.orderFile.domain.OrderFile;
 import com.spring.web.api.backend.hex.orderFile.api.OrderFileApi;
@@ -26,7 +27,6 @@ import java.util.concurrent.atomic.AtomicReference;
 public class OrderFileSystemUseCase implements OrderFileApi {
 
 	private static final String FILESYSTEM_DIR_NAME = "OrderFS";
-
 	private final OrderSpi orderSpi;
 	private final OrderFileSpi orderFileSpi;
 
@@ -36,15 +36,10 @@ public class OrderFileSystemUseCase implements OrderFileApi {
 	}
 
 	@Override
-	public Optional<OrderFile> fileUpload(UUID orderId, MultipartFile file) throws IOException {
+	public Optional<OrderFile> fileUpload(UUID orderId, MultipartFile file) throws IOException{
+
 		if (!orderSpi.existsById(orderId)) {
-			log.error(this.getClass().getName()
-				+ ": "
-				+ "fileUpload:"
-				+ "there is no order with id :"
-				+ orderId
-			);
-			return null;
+			throw new OrderIdNotFoundException();
 		}
 
 		String filecode = RandomStringUtils.randomAlphabetic(8);
@@ -70,23 +65,12 @@ public class OrderFileSystemUseCase implements OrderFileApi {
 	@Override
 	public Resource getFileAsResource(UUID orderId, String filecode) throws IOException{
 		if(!orderSpi.existsById(orderId)){
-			log.error(this.getClass().getName()
-				+ ": "
-				+ "getFileAsResource:"
-				+ "there is no order with id :"
-				+ orderId
-			);
-			return null;
+			throw new OrderIdNotFoundException(orderId);
 		}
 		if(!orderFileSpi.existsByFilecode(filecode)){
-			log.error(this.getClass().getName()
-				+ ": "
-				+ "getFileAsResource:"
-				+ "there is no file with filecode :"
-				+ filecode
-			);
-			return null;
+			throw new OrderFilecodeNotFoundException(filecode);
 		}
+
 		String filename = orderFileSpi.findFilenameByFilecode(filecode);
 		Path dirPath = Paths.get(FILESYSTEM_DIR_NAME).resolve(orderId.toString()).resolve(filecode);
 		AtomicReference<Path> foundFile = new AtomicReference<>();
@@ -111,5 +95,31 @@ public class OrderFileSystemUseCase implements OrderFileApi {
 	@Override
 	public Integer countByOrderId(UUID id) {
 		return orderFileSpi.countByOrderId(id);
+	}
+
+	@Override
+	public boolean existsByOrderId(UUID id) {
+		return orderFileSpi.existsByOrderId(id);
+	}
+
+
+	@Override
+	public long deleteByOrderIdAndFilecode(UUID id, String filecode) {
+		if(!orderSpi.existsById(id)){
+			throw new OrderIdNotFoundException(id);
+		}
+		if(!orderFileSpi.existsByFilecode(filecode)){
+			throw new OrderFilecodeNotFoundException(filecode);
+		}
+		return orderFileSpi.deleteByOrderIdAndFilecode(id, filecode);
+	}
+
+
+	@Override
+	public long deleteByOrderId(UUID id) {
+		if(!orderSpi.existsById(id)){
+			throw new OrderIdNotFoundException(id);
+		}
+		return orderFileSpi.deleteByOrderId(id);
 	}
 }

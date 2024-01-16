@@ -14,7 +14,7 @@ public class TagGenericMapper implements GenericMapperRDR<TagRequest, Tag, TagRe
 			return null;
 		}
 		return new Tag(tagRequest.name(),
-			tagRequest.aliasId());
+			tagRequest.aliasName());
 	}
 
 	@Override
@@ -23,6 +23,6 @@ public class TagGenericMapper implements GenericMapperRDR<TagRequest, Tag, TagRe
 			return null;
 		}
 		return new TagResponse(tag.getName(),
-			tag.getAliasId());
+			tag.getAliasName());
 	}
 }

@@ -20,4 +20,5 @@ public interface OrderApi {
 	void deleteById(UUID id);
 
 	void deleteTag(UUID id, UUID tagId);
+	boolean existsById(UUID id);
 }
