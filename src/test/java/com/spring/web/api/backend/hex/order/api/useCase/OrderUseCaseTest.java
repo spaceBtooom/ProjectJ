@@ -1,5 +1,6 @@
 package com.spring.web.api.backend.hex.order.api.useCase;
 
+import com.spring.web.api.backend.hex.order.api.exeptions.OrderException;
 import com.spring.web.api.backend.hex.order.domain.Order;
 import com.spring.web.api.backend.hex.order.OrderProvider;
 import com.spring.web.api.backend.hex.order.api.OrderApi;
@@ -33,7 +34,7 @@ class OrderUseCaseTest {
 		tested = new OrderUseCase(orderSpi, testedSupply);
 	}
 	@Test
-	void shouldSaveAndReturnOrder(){
+	void shouldSaveAndReturnOrder() throws OrderException {
 		final Order order = OrderProvider.getCreatedOrder();
 		when(tagSpi.existsByNameAndAliasId(anyString(),anyString())).thenReturn(true);
 		when(orderSpi.findById(order.getId())).thenReturn(Optional.of(order));

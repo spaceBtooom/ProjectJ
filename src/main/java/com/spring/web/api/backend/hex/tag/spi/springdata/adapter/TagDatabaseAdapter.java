@@ -1,7 +1,10 @@
-package com.spring.web.api.backend.hex.tag.spi.springdata.spi;
+package com.spring.web.api.backend.hex.tag.spi.springdata.adapter;
 
-import com.spring.web.api.backend.hex.tag.api.exception.TagCannotBeSaveException;
+import com.spring.web.api.backend.hex.tag.spi.springdata.exception.TagEntityCannotBeUpdatedException;
+import com.spring.web.api.backend.hex.tag.api.exception.TagException;
 import com.spring.web.api.backend.hex.tag.spi.springdata.db.SpringDataTagRepository;
+import com.spring.web.api.backend.hex.tag.spi.springdata.dbo.TagEntity;
+import com.spring.web.api.backend.hex.tag.spi.springdata.exception.TagEntityCannotBeSavedException;
 import com.spring.web.api.backend.hex.tag.spi.springdata.mapper.GenericMapper.TagEntityGenericMapper;
 import com.spring.web.api.backend.hex.tag.domain.Tag;
 import com.spring.web.api.backend.hex.tag.spi.TagSpi;
@@ -11,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class TagDatabaseAdapter implements TagSpi {
@@ -35,14 +37,30 @@ public class TagDatabaseAdapter implements TagSpi {
 		return Optional.of(tagMapper.toDomain(tagRepository
 			.save(tagMapper.toDbo(tag))));
 	}
+	@Transactional
 	@Override
-	public void update(UUID id, Tag tag) {
-		tagRepository.save(tagMapper.toDbo(tag));
+	public Optional<Tag> update(Tag tag){
+		Optional<TagEntity> tagEntity = Optional.of(tagRepository.findByName(tag.getName()));
+		tagEntity.ifPresentOrElse(
+			tg->{
+				tg.setAliasName(tag.getAliasName());
+			},
+			()->{
+				throw new TagEntityCannotBeUpdatedException(
+						"This tag: \n"
+						+ tag.toString()
+						+ "\nIs not valid"
+				);
+			}
+		);
+		return Optional.of(tagMapper
+			.toDomain(tagRepository.save(tagEntity.get())));
 	}
 
+	@Transactional
 	@Override
-	public void deleteById(UUID id) {
-		tagRepository.deleteById(id);
+	public long deleteByName(String name) {
+		return tagRepository.deleteByName(name);
 	}
 
 	@Override
@@ -69,7 +87,7 @@ public class TagDatabaseAdapter implements TagSpi {
 			.stream()
 			.forEach(tag->{
 				save(tag).ifPresentOrElse(tagList::add,()->{
-					throw new TagCannotBeSaveException(
+					throw new TagEntityCannotBeSavedException(
 						"This tag: \n"
 						+ tag.toString()
 						+"\nIs not valid");

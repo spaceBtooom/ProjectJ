@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS tags(
 	id uuid PRIMARY KEY NOT NULL,
 	name VARCHAR(60) NOT NULL DEFAULT 'Empty tag name',
-	alias_name VARCHAR(10) NOT NULL
+	alias_name VARCHAR(14) NOT NULL
 
 );
 

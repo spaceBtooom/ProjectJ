@@ -1,12 +1,12 @@
 package com.spring.web.api.backend.hex.tag.api.useCase;
 
+import com.spring.web.api.backend.hex.tag.api.exception.TagException;
 import com.spring.web.api.backend.hex.tag.spi.TagSpi;
 import com.spring.web.api.backend.hex.tag.domain.Tag;
 import com.spring.web.api.backend.hex.tag.api.TagApi;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public class TagUseCase implements TagApi {
 
@@ -22,13 +22,13 @@ public class TagUseCase implements TagApi {
 	}
 
 	@Override
-	public void update(UUID id, Tag tag) {
-		tagSpi.save(tag);
+	public Optional<Tag> update(Tag tag) throws TagException {
+		return tagSpi.update(tag);
 	}
 
 	@Override
-	public void deleteById(UUID id) {
-		tagSpi.deleteById(id);
+	public long deleteByName(String name) {
+		return tagSpi.deleteByName(name);
 	}
 
 	@Override

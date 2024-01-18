@@ -1,6 +1,7 @@
 package com.spring.web.api.backend.hex.order.api.spring.webmvc;
 
 import com.spring.web.api.backend.hex.order.api.OrderApi;
+import com.spring.web.api.backend.hex.order.api.exeptions.OrderException;
 import com.spring.web.api.backend.hex.order.api.spring.webmvc.dto.OrderRequest;
 import com.spring.web.api.backend.hex.order.api.spring.webmvc.dto.OrderResponse;
 import com.spring.web.api.backend.hex.order.api.spring.webmvc.mapper.OrderMapper.GenericMapper.OrderGenericMapper;
@@ -53,7 +54,7 @@ public class OrderRestController {
 	@PostMapping("/")
 	ResponseEntity<?> addOrder(@RequestBody
 				   @Parameter(name = "order", description = "Received order")
-				   OrderRequest orderRequest) {
+				   OrderRequest orderRequest) throws OrderException {
 		return orderApi.save(orderMapper.toDomain(orderRequest))
 			.map(order ->
 				ResponseEntity
@@ -85,7 +86,8 @@ public class OrderRestController {
 	@DeleteMapping("/{id}")
 	ResponseEntity<?> deleteOrder(@PathVariable("id")
 				      @Parameter(description = "Order id", example = "f5e7ded8-c281-42bf-bfc1-6a5d44ba6765")
-				      UUID id) {
+				      UUID id)
+	throws OrderException {
 		orderApi.deleteById(id);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
@@ -96,6 +98,7 @@ public class OrderRestController {
 	})
 	@GetMapping("/")
 	ResponseEntity<?> getOrders() {
+
 		ArrayList<OrderResponse> orders = new ArrayList<>();
 		orderApi
 			.findAll()
@@ -114,13 +117,12 @@ public class OrderRestController {
 				  UUID id,
 				  @RequestBody
 				  @NotEmpty
-				  List<TagRequest> tagRequests) {
-		orderApi.addTags(id, tagRequests
+				  List<TagRequest> tagRequests)
+	throws OrderException{
+
+		return  ResponseEntity.ok(orderApi.addTags(id, tagRequests
 			.stream()
 			.map(tagMapper::toDomain)
-			.toList());
-
-		return ResponseEntity.ok()
-			.build();
+			.toList()));
 	}
 }

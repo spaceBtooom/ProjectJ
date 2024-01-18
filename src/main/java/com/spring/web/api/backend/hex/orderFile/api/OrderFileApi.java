@@ -1,6 +1,7 @@
 package com.spring.web.api.backend.hex.orderFile.api;
 
-import com.spring.web.api.backend.hex.orderFile.api.useCase.OrderFilecodeNotFoundException;
+import com.spring.web.api.backend.hex.order.api.exeptions.OrderException;
+import com.spring.web.api.backend.hex.orderFile.api.exception.*;
 import com.spring.web.api.backend.hex.order.api.exeptions.OrderIdNotFoundException;
 import com.spring.web.api.backend.hex.orderFile.domain.OrderFile;
 import org.springframework.core.io.Resource;
@@ -12,12 +13,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface OrderFileApi {
-	public Optional<OrderFile> fileUpload(UUID orderId, MultipartFile file) throws IOException,
-		OrderIdNotFoundException;
+	public Optional<OrderFile> fileUpload(UUID orderId, MultipartFile file) throws OrderException,
+		OrderFileException;
 
-	public Resource getFileAsResource(UUID orderId, String filecode) throws IOException,
-		OrderIdNotFoundException,
-		OrderFilecodeNotFoundException;
+	public Resource getFileAsResource(UUID orderId, String filecode) throws OrderException,OrderFileException;
 
 	List<OrderFile> findByOrderId(UUID id);
 
@@ -25,7 +24,7 @@ public interface OrderFileApi {
 
 	boolean existsByOrderId(UUID id);
 
-	long deleteByOrderIdAndFilecode(UUID id, String filecode);
+	long deleteByOrderIdAndFilecode(UUID id, String filecode) throws OrderException, OrderFileException;
 
-	long deleteByOrderId(UUID id);
+	long deleteByOrderId(UUID id) throws OrderFileException, OrderException;
 }

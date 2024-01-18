@@ -1,6 +1,6 @@
 package com.spring.web.api.backend.hex.tag.api.exception;
 
-public class TagException extends RuntimeException{
+public class TagException extends Exception{
 	public TagException() {
 	}
 

@@ -1,7 +1,9 @@
 package com.spring.web.api.backend.hex.orderFile.api.spring.webmvc;
 
 import com.spring.web.api.backend.hex.order.api.OrderApi;
+import com.spring.web.api.backend.hex.order.api.exeptions.OrderException;
 import com.spring.web.api.backend.hex.orderFile.api.OrderFileApi;
+import com.spring.web.api.backend.hex.orderFile.api.exception.OrderFileException;
 import com.spring.web.api.backend.hex.orderFile.api.spring.webmvc.constraint.FileFormatConstraint;
 import com.spring.web.api.backend.hex.orderFile.api.spring.webmvc.constraint.MaxAttachedFileSizeConstraint;
 import com.spring.web.api.backend.hex.orderFile.api.spring.webmvc.dto.OrderFileResponse;
@@ -53,12 +55,11 @@ public class OrderFileRestController {
 		@ApiResponse(responseCode = "500", description = "There is an internal error on the server, corresponding IOException ", content = @Content(schema = @Schema(implementation = Void.class)))
 	})
 	@PostMapping("")
-	ResponseEntity<?> uploadFileForOrder(
-		@RequestParam("id")
-		UUID id,
-		@RequestParam("file") @MaxAttachedFileSizeConstraint
-		List<@FileFormatConstraint MultipartFile> multipartFile
-	) throws IOException {
+	ResponseEntity<?> uploadFileForOrder(@RequestParam("id")
+					     UUID id,
+					     @RequestParam("file") @MaxAttachedFileSizeConstraint
+					     List<@FileFormatConstraint MultipartFile> multipartFile)
+		throws OrderFileException, OrderException {
 		if (multipartFile.isEmpty()) {
 			return new ResponseEntity<>("There are no files to add", HttpStatus.PRECONDITION_FAILED);
 		}
@@ -77,21 +78,18 @@ public class OrderFileRestController {
 		}
 		List<OrderFileResponse> fileUploadResponses = new ArrayList<>();
 		for (MultipartFile file : multipartFile) {
-			try {
-				orderFileApi.fileUpload(id, file).ifPresent(orderFile -> fileUploadResponses.add(mapper.toResponse(orderFile)));
-			} catch (OrderIdNotFoundException ex) {
-				return new ResponseEntity<>("There is no such order with id:" + id, HttpStatus.UNPROCESSABLE_ENTITY);
-			} catch (IOException ex) {
-				return new ResponseEntity<>("IOException on the server" + id, HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-
+			orderFileApi
+				.fileUpload(id, file)
+				.ifPresent(orderFile ->
+					fileUploadResponses
+						.add(mapper.toResponse(orderFile)));
 		}
 		return new ResponseEntity<>(fileUploadResponses, HttpStatus.OK);
 	}
 
 	@Operation(summary = "Get files list by order id", description = "Return url by which a file available")
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "Files' list is successful obtained", content =@Content(schema = @Schema(implementation = OrderFileResponse.class))),
+		@ApiResponse(responseCode = "200", description = "Files' list is successful obtained", content = @Content(schema = @Schema(implementation = OrderFileResponse.class))),
 		@ApiResponse(responseCode = "404", description = "File not found", content = @Content(schema = @Schema(implementation = Void.class))),
 		@ApiResponse(responseCode = "422", description = "There is no such order", content = @Content(schema = @Schema(implementation = Void.class))),
 		@ApiResponse(responseCode = "500", description = "There is an internal error on the server, corresponding IOException ", content = @Content(schema = @Schema(implementation = Void.class)))
@@ -99,7 +97,8 @@ public class OrderFileRestController {
 	@GetMapping("/{id}")
 	ResponseEntity<?> getFiles(@PathVariable("id")
 				   @Parameter(name = "id", description = "Order id", example = "7f659921-adeb-4602-bfe6-82beb3f48725")
-				   UUID id) throws OrderIdNotFoundException {
+				   UUID id)
+		throws OrderException {
 		List<OrderFileResponse> filenames = orderFileApi.findByOrderId(id).stream().map(mapper::toResponse).toList();
 		if (filenames.isEmpty()) {
 			return new ResponseEntity<>("There is no files of order with id:" + id, HttpStatus.NO_CONTENT);
@@ -125,18 +124,13 @@ public class OrderFileRestController {
 				       UUID id,
 				       @Parameter(description = "Filecode that represented by randomize string(8)", example = "UpoBbCRi")
 				       @PathVariable(name = "filecode")
-				       String filecode) {
-		Resource resource = null;
-		try {
-			resource = orderFileApi.getFileAsResource(id, filecode);
-		} catch (IOException e) {
-			return ResponseEntity.internalServerError().build();
-		}
-
+				       String filecode)
+		throws OrderFileException, OrderException {
+		//MalformedURLException
+		Resource resource = orderFileApi.getFileAsResource(id, filecode);
 		if (resource == null) {
 			return new ResponseEntity<>("File not found", HttpStatus.NOT_FOUND);
 		}
-
 
 		String contentType = "application/octet-stream";
 		String headerValue = "attachment; filename=\"" + resource.getFilename() + "\"";
@@ -146,37 +140,42 @@ public class OrderFileRestController {
 			.header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
 			.body(resource);
 	}
+
 	@Operation(summary = "Delete file by order id and filecode")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "Return number of deleted files"),
 	})
 
 	@DeleteMapping("/{id}/{filecode}")
-	ResponseEntity<?> deleteFileByFilecode(
-					@PathVariable("id")
-					@Parameter(description = "Order id", example = "1")
-					UUID id,
-					@PathVariable(name = "filecode")
-					@Parameter(description = "Filecode that represented by randomize string(8)", example = "UpoBbCRi")
-					String filecode) {
+	ResponseEntity<?> deleteFileByFilecode(@PathVariable("id")
+					       @Parameter(description = "Order id", example = "7f659921-adeb-4602-bfe6-82beb3f48725")
+					       UUID id,
+					       @PathVariable(name = "filecode")
+					       @Parameter(description = "Filecode that represented by randomize string(8)", example = "UpoBbCRi")
+					       String filecode)
+		throws OrderException, OrderFileException {
 
 		return ResponseEntity.ok(
 			orderFileApi.deleteByOrderIdAndFilecode(id, filecode) == 1
-			? "File was deleted" : "There is no such file or order id"
-		);
+				? "File was deleted" : "There is no such file or order id");
+
 	}
+
 	@Operation(summary = "Delete files by order id")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "Return number of deleted files"),
 	})
 	@DeleteMapping("/{id}")
 	ResponseEntity<?> deleteFilesByOrderId(@PathVariable("id")
-					       @Parameter(description = "Order id", example = "1")
-					       UUID id) {
+					       @Parameter(description = "Order id", example = "7f659921-adeb-4602-bfe6-82beb3f48725")
+					       UUID id)
+	throws OrderException,
+		OrderFileException{
 
 		return ResponseEntity.ok(
 			orderFileApi.deleteByOrderId(id) > 0
 				? "Files was deleted" : "There is no such order or order is empty"
 		);
+
 	}
 }

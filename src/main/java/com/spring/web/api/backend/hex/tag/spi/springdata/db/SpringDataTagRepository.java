@@ -10,6 +10,7 @@ import java.util.UUID;
 public interface SpringDataTagRepository extends CrudRepository<TagEntity, UUID> {
 	TagEntity findByName(String name);
 
+	long deleteByName(String name);
 	boolean existsByName(String name);
 	boolean existsByNameAndAliasName(String name, String aliasName);
 }
