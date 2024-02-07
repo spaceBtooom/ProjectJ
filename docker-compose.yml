@@ -10,7 +10,7 @@ version: "3"
 
 services:
 
-     # Первый сервис (контейнер): server.
+    # Первый сервис (контейнер): server.
     # Назвать его можно так, как нужно разработчику.
     # Понятное название сервиса помогает определить его роль.
 
@@ -36,31 +36,53 @@ services:
 
         ports:
             -   '8080:8080'
-#        depends_on:
-#            -   db
-#        environment:
-#          - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/api_db
-#          - SPRING_DATASOURCE_USERNAME=user
-#          - SPRING_DATASOURCE_PASSWORD=pass
-#          - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
-#          - SPRING_JPA_SHOW-SQL=true
-#          - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
-#
+            -   '5005:5005'
+        depends_on:
+            -   'db'
+        env_file:
+            - .env
+        environment:
+          - _JAVA_OPTIONS=-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+          # DB setting
+          - SPRING_DATASOURCE_URL=${DB_URL:-jdbc:postgresql://db:5432/test_db}
+          - SPRING_DATASOURCE_USERNAME=${DB_USER:-test}
+          - SPRING_DATASOURCE_PASSWORD=${DB_PASS:-test}
+          # Hibernate setting
+          - SPRING_JPA_HIBERNATE_DDL_AUTO=none
+          - SPRING_JPA_SHOW_SQL=true
+          # Frontend location
+          - SPRING_WEB_RESOURCES_STATIC_LOCATIONS=classpath:/frontend/src/
+          # OpenAPI setting
+          - SPRINGDOC_API_DOCS_PATH=/docs
+          - SPRINGDOC_SWAGGER_UI_PATH=/swag
+          # SPRINGDOC_SWAGGER_UI_DISABLE_SWAGGER_DEFAULT_URL=true
+            #springdoc.swagger-ui.disable-swagger-default-url = true
+          # File upload operation settings
+          - SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE=${MAX_UPLOAD_FILE_SIZE:-1MB}
+          - SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE=${MAX_UPLOAD_REQUEST_SIZE:-3MB}
 
-     # Второй сервис (контейнер): БД.
-     # Этот сервис назван 'db'.
-#    db:
-#        image: postgres:15.0
-#        container_name: db
-#        ports:
-#            - '5432:5432'
-#        environment:
-#            POSTGRES_DB: api_db
-#            POSTGRES_USER: user
-#            POSTGRES_PASSWORD: pass
-#        volumes:
-#          - postgres_db:/var/postgres/lib/data
-#
-#volumes:
-#  postgres_db:
-#      driver: local
+
+        volumes:
+          - 'app:/home/app/data'
+
+#      Второй сервис (контейнер): БД.
+#      Этот сервис назван 'db'.
+    db:
+        image: postgres:latest
+        container_name: db
+        ports:
+            - '5432:5432'
+        environment:
+            POSTGRES_DB: ${DB_NAME}
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASS}
+        env_file:
+          - .env
+        volumes:
+          - 'postgres_db:/var/postgres/lib/data'
+
+volumes:
+  app:
+    driver: local
+  postgres_db:
+      driver: local

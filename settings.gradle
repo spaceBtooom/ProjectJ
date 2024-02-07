@@ -1,1 +1,6 @@
 rootProject.name = 'ProjectJ'
+include 'domain'
+include 'application'
+include 'adapter'
+include 'bootstrap'
+
